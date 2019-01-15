@@ -1,0 +1,44 @@
+<content>
+    <lang>
+        <idx>img/flag_ro.png</idx>
+        <href>content/test_data/</href>
+    </lang>
+    
+    <lang>
+	<idx>img/flag_uk.png</idx>
+	<href>content/test_data/</href>
+    </lang>
+    
+    <title>.quarkCMS, the lightweight alternative</title>
+    <description>.quarkCMS, fast lightweight CMS for all basic needs</description>
+    <keywords>.quark, CMS, .quarkCMS, framework, bitnova</keywords>
+    <author>bitnova</author>
+    
+    <item>
+	<menu_item>Lorem Ipsum</menu_item>
+	<menu_item>Lorem Ipsum</menu_item>
+	<href>lorem_ipsum.html</href>
+    </item>
+    
+    <item>
+	<menu_item>Scrambled Text</menu_item>
+	<menu_item>Scrambled Text</menu_item>
+	<href>scrambled.html</href>
+    </item>
+    
+    <item>
+	<menu_item>Servers Strike</menu_item>
+	<menu_item>Servers Strike</menu_item>
+	<href>strike.html</href>
+    </item>
+    
+    <item>
+	<menu_item>Text Formats</menu_item>
+	<menu_item>Text Formats</menu_item>
+	<href>test_text.html</href>
+    </item>
+    
+    <idx_current_page>0</idx_current_page>
+    <idx_current_lang>0</idx_current_lang>
+    
+</content>

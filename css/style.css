@@ -1,0 +1,141 @@
+BODY
+{
+	color:black;
+	background-color:#99a1b0;
+	
+	scrollbar-face-color: #c0c0c0;
+	scrollbar-arrow-color: #fff;
+	scrollbar-track-color: #d0d0d0;
+	
+	scrollbar-shadow-color: #f0f0f0;
+	scrollbar-highlight-color: #888;
+	
+	scrollbar-3dlight-color: #f0f0f0;
+	scrollbar-darkshadow-Color: #888;
+	
+	font-family: Arial;
+	font-size: 14;
+}
+
+
+div.wrapper
+{
+	display: block;
+	position: relative;
+	/*background-image: url("../img/bkgrnd.png");
+	background-repeat: no-repeat;*/
+	background-color: #606050;
+	width: 800px;
+	height: 600px;
+	border: 1px solid #FFC000;
+	border-radius: 10px;
+	box-shadow: 5px 5px 10px #808080;
+	margin: 40px auto;
+	text-align: left;
+}
+
+div.page
+{
+	display: block;
+	position: relative;
+	top: 32px;
+	background-image: linear-gradient(silver, white);
+	height: 512px;
+}
+
+div.menu
+{
+	position: relative;
+	left: 12px; 
+	top: 144px; 
+	width: 200px; 
+	height: 260px;
+}
+
+a.menu_item
+{
+	width: 180px;
+	height: 24px;
+	background: url("../img/menu_item.png") no-repeat 0px 0px;
+	text-decoration: none;
+	margin-bottom: 15px;
+	display: block;
+}
+
+a.menu_item:hover
+{
+	background-position: 0px -24px;
+}
+
+
+a.menu_item p
+{
+	font-family: Arial;
+	font-size: 14;
+	text-align: center;
+	color: #000;
+	font-style: normal;
+	font-variant: normal;
+}
+
+div.lang
+{
+    position: relative;
+    left: 730px;
+    top: -24px;
+}
+
+img.lang
+{
+    padding: 0px 0px 0px 6px;
+    border: 0px;
+}
+
+div.title
+{
+	position: relative; 
+	left: 480px; 
+	top: -200px;
+	width: 300px; 
+	height: 25px; 
+	/*background-color: Gray;*/
+	text-align: right;
+	font-family: Arial;
+	font-size: 16;
+	font-weight: bold;
+}
+
+div.content
+{
+	position: relative; 
+	left: 232px; 
+	top: -192px;
+	width: 560px; 
+	height: 360px; 
+	text-align: justify;
+	font-family: Arial;
+	font-size: 14;
+	color: #404060;
+	padding: 0px 4px 4px 0px;
+	overflow: auto;
+}
+
+td
+{
+        font-family: Arial;
+        font-size: 12;y
+}
+
+div.poweredby
+{
+	position: relative;
+	left: 560px;
+	top: 40px;
+	width: 250px;
+	height: 40px;
+}
+
+div.poweredby img
+{
+	border: 0;
+}
