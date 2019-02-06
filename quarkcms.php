@@ -1,4 +1,4 @@
-<?php 
+<?php
 
     class TQuarkCMS //extends TRPCService
     {
@@ -10,19 +10,23 @@
             self::$Finstance = new TQuarkCMS();
             return self::$Finstance;
         }
-
         
-        //  Define title, description, keywords and author tag vars
+        private function __construct()
+        {
+            
+        }
+        
+        //  Declare title, description, keywords and author tag vars
         var $site_title = "";
         var $site_description = "";
         var $site_keywords = "";
         var $site_author = "";
         
-        //  Define laguage references
+        //  Declare language references
         var $lang_idxs = array();
         var $lang_hrefs = array();
         
-        //  Define menu items
+        //  Declare menu items
         var $menu_items = array();
         var $menu_hrefs = array();
         
@@ -66,7 +70,6 @@
         
         function GenerateLangIcons()
         {
-            
             for ($i = 0; $i < count($this->lang_idxs); $i++)
             {
                 echo '<a href="index.php?content_id='.$this->idx_current_page.'&lang_id='.$i.'"><img class="lang" src="'.$this->lang_idxs[$i].'"/></a>';
@@ -75,7 +78,6 @@
         
         function GenerateMenu()
         {
-            
             for ($i = 0; $i < count($this->menu_items[$this->idx_current_lang]); $i++)
             {
                 echo '<a class="menu_item" href="index.php?content_id='.$i.'&lang_id='.$this->idx_current_lang.'"><p>'.$this->menu_items[$this->idx_current_lang][$i].'</p></a>';
@@ -84,13 +86,11 @@
         
         function GenerateTitle()
         {
-            
             echo '<p>'.$this->menu_items[$this->idx_current_lang][$this->idx_current_page].'</p>';
         }
         
         function GenerateContent()
         {
-            
             include $this->lang_hrefs[$this->idx_current_lang].$this->menu_hrefs[$this->idx_current_page];
         }
 
@@ -125,5 +125,4 @@
         }
         
     }
-
 ?>
