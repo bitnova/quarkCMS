@@ -1,4 +1,11 @@
 <content>
+    <title>.quarkCMS, the lightweight alternative</title>
+    <description>.quarkCMS, fast lightweight CMS for all basic needs</description>
+    <keywords>.quark, CMS, .quarkCMS, framework, bitnova</keywords>
+    <author>bitnova</author>
+    
+    <template>templates/bitSimpleCMS</template>
+        
     <lang>
         <idx>img/flag_ro.png</idx>
         <href>content/test_data/</href>
@@ -8,11 +15,6 @@
 	<idx>img/flag_uk.png</idx>
 	<href>content/test_data/</href>
     </lang>
-    
-    <title>.quarkCMS, the lightweight alternative</title>
-    <description>.quarkCMS, fast lightweight CMS for all basic needs</description>
-    <keywords>.quark, CMS, .quarkCMS, framework, bitnova</keywords>
-    <author>bitnova</author>
     
     <item>
 	<menu_item>Lorem Ipsum</menu_item>

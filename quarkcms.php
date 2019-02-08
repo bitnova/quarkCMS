@@ -22,6 +22,9 @@
         var $site_keywords = "";
         var $site_author = "";
         
+        //  Declare template path
+        var $template_path = "";
+        
         //  Declare language references
         var $lang_idxs = array();
         var $lang_hrefs = array();
@@ -48,6 +51,8 @@
                 $this->site_description = $xml->description;
                 $this->site_keywords = $xml->keywords;
                 $this->site_author = $xml->author;
+                
+                if (isset($xml->template)) $this->template_path = $xml->template;
                 
                 for ($i = 0; $i < sizeof($xml->lang); $i++)
                 {
@@ -104,24 +109,40 @@
         
         function loadTemplate()
         {
-            include 'template.html';
+            if (!file_exists($this->template_path)) return 'template not found';
+            
+            $template_file = $this->template_path;            
+            if (is_dir($template_file))
+            {
+                //  attempt to find an actual code file
+                if (file_exists($template_file.DIRECTORY_SEPARATOR.'template.html')) $template_file = $template_file.DIRECTORY_SEPARATOR.'template.html';
+                else if (file_exists($template_file.DIRECTORY_SEPARATOR.'template.php')) $template_file = $template_file.DIRECTORY_SEPARATOR.'template.php';
+                else if (file_exists($template_file.DIRECTORY_SEPARATOR.'index.html')) $template_file = $template_file.DIRECTORY_SEPARATOR.'index.html';
+                else if (file_exists($template_file.DIRECTORY_SEPARATOR.'index.php')) $template_file = $template_file.DIRECTORY_SEPARATOR.'index.php';                
+            }
+            
+            ob_start();
+            include $template_file;
+            $s = ob_get_contents();
+            ob_end_clean();
+            
+            return $s;
         }
         
         function run()
         {
             $content_id = -1;
+            if (isset($_GET['content_id'])) $content_id = $_GET['content_id'];
+
             $lang_id = -1;
-            
-            $content_id = $_GET["content_id"];
-            $lang_id = $_GET["lang_id"];
+            if (isset($_GET['lang_id'])) $lang_id = $_GET['lang_id'];
             
             if ($content_id > -1) $this->idx_current_page = $content_id;
             if ($lang_id > -1) $this->idx_current_lang = $lang_id;
 
             $this->loadContentDefs();
             $this->setHeader();
-            $this->loadTemplate();
-            
+            echo $this->loadTemplate();            
         }
         
     }
