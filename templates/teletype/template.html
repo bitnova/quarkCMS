@@ -1,0 +1,72 @@
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<style>
+		div.menu a
+		{
+			/*display: block;*/
+			color: #aaa;
+			text-decoration: none;
+			padding-right: 16px;
+		}
+		
+		div.menu a.current
+		{
+			color: #fff;
+		}
+		
+		div.row
+		{
+			display: table-row;
+			width: 100%;
+		}
+		
+		div.cell
+		{
+			display: table-cell;
+			padding: 16px;
+			vertical-align: top;
+		}
+	</style>
+</head>
+<body style="background-color: black; color: #0a0;">
+	<div style="display: table; width: 100%;">
+		<div class="row">
+			<div class="logo cell" style="">
+				<img style="filter: invert(1); -webkit-filter: invert(1);" src="img/quarkCMS.png"/>
+				<div class="module" style="background-color: #040; width: 100%; min-height: 160px; border: 1px solid #aaa;"></div>
+			</div>
+			<div class="cell" style="width: 100%; color: #0f0;">
+				<div class="menu"><?php TQuarkCMS::instance()->generateMenu(); ?></div>
+				<br/>
+				<br/>
+				<br/>
+				<br/>
+				<br/>
+				<?php TQuarkCMS::instance()->generateTitle(); ?>
+				<div class="content" style="width: 100%;"><?php TQuarkCMS::instance()->generateContent(); ?></div>
+			</div>
+		</div>
+		<div class="row">
+		</div>
+	</div>
+	<div style="display: table; width: 100%;">
+		<div class="row">
+			<div class="cell" style="width: 100%; border: 1px solid #aaa;">
+				<span>Script executed in: <strong id="serverExecutionTime"></strong> ms</span><br/>
+				<span>Page rendered in: <strong id="htmlRenderTime"></strong> ms</span>
+			</div>
+		</div>
+	</div>
+	
+	<script type="text/javascript">
+		window.addEventListener('load', showPerformance);
+		function showPerformance()
+		{
+			var tag = document.getElementById('serverExecutionTime');
+			tag.innerText = window.serverExecutionTime;
+			
+			var tag = document.getElementById('htmlRenderTime');
+			tag.innerText = window.performance.now().toFixed(3);
+		}
+	</script>
+</body>

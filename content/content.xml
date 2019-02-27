@@ -4,7 +4,7 @@
     <keywords>.quark, CMS, .quarkCMS, framework, bitnova</keywords>
     <author>bitnova</author>
     
-    <template>templates/bitSimpleCMS</template>
+    <template>templates/teletype</template>
         
     <lang>
         <idx>img/flag_ro.png</idx>
@@ -38,6 +38,12 @@
 	<menu_item>Text Formats</menu_item>
 	<menu_item>Text Formats</menu_item>
 	<href>test_text.html</href>
+    </item>
+
+    <item>
+		<menu_item>Scroll Text</menu_item>
+		<menu_item>Scroll Text</menu_item>
+		<href>scrolltext.html</href>
     </item>
     
     <idx_current_page>0</idx_current_page>

@@ -56,7 +56,14 @@ a.menu_item
 {
 	width: 180px;
 	height: 24px;
-	background: url("../img/menu_item.png") no-repeat 0px 0px;
+	background: url("./menu_item.png") no-repeat 0px 0px;
+	text-align: center;
+	color: #000;
+	font-family: Arial;
+	font-size: 14;
+	text-align: center;
+	font-style: normal;
+	font-variant: normal;
 	text-decoration: none;
 	margin-bottom: 15px;
 	display: block;
@@ -65,17 +72,25 @@ a.menu_item
 a.menu_item:hover
 {
 	background-position: 0px -24px;
-}
-
-
-a.menu_item p
-{
+	text-align: center;
+	color: #000;
 	font-family: Arial;
 	font-size: 14;
 	text-align: center;
-	color: #000;
 	font-style: normal;
 	font-variant: normal;
+}
+
+a.menu_item:visited
+{
+	text-align: center;
+	color: #000;
+	font-family: Arial;
+	font-size: 14;
+	text-align: center;
+	font-style: normal;
+	font-variant: normal;
+	
 }
 
 div.lang

@@ -1,5 +1,39 @@
 <?php
 
+    $quarkCMSTimeOrigin = microtime(true);
+
+
+    //-------------------------------------------------------------------------------------------------------
+    //  determine working directory
+    $qcmsPath = __DIR__;
+    $s = dirname($_SERVER['SCRIPT_FILENAME']);
+    if ($s != '\\' && $s != '/') $s .= DIRECTORY_SEPARATOR;
+    if (strpos($qcmsPath, $s) >= 0) $qcmsPath = substr($qcmsPath, strlen($s));
+    define('qcmsPath', $qcmsPath);
+    
+    //-------------------------------------------------------------------------------------------------------
+    //  register a shutdown function to be called on script termination
+    register_shutdown_function('quarkCMS_shutdown');
+    function quarkCMS_shutdown()
+    {
+        //  do error checking
+        
+        //  measure script execution time and write it in the browser window object
+        global $quarkCMSTimeOrigin;
+        $t = round((microtime(true) - $_SERVER['REQUEST_TIME_FLOAT']) * 1000, 3); //  available since PHP 5.4.0
+        /*$js =   '<script type="text/javascript">'."\n".
+                '   window.addEventListener("load", quarkCMSLoad);'."\n".
+                '   function quarkCMSLoad()'."\n".
+                '   {'."\n".
+                '      window.serverExecutionTime = '.(string)$t.';'."\n".
+                '   }'."\n".
+                '</script>';*/
+        //  this should be executed immediately instead of using onload event
+        $js =   '<script type="text/javascript">window.serverExecutionTime = '.(string)$t.';</script>';
+        echo $js;
+    }
+    
+    
     class TQuarkCMS //extends TRPCService
     {
         static private $Finstance = null;
@@ -15,6 +49,8 @@
         {
             
         }
+        
+        var $dataPath = '';
         
         //  Declare title, description, keywords and author tag vars
         var $site_title = "";
@@ -42,9 +78,13 @@
         //  Load content definitions from xml
         function loadContentDefs()
         {
-            if (file_exists('content.xml'))
+            $path = trim($this->dataPath);
+            if (strlen($path) > 0) $path = rtrim($path, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
+            $path .= 'content.xml';
+            
+            if (file_exists($path))
             {
-                $xml = simplexml_load_file('content.xml');
+                $xml = simplexml_load_file($path);
                 
                 //  load site descriptor tags
                 $this->site_title = $xml->title;
@@ -85,13 +125,18 @@
         {
             for ($i = 0; $i < count($this->menu_items[$this->idx_current_lang]); $i++)
             {
-                echo '<a class="menu_item" href="index.php?content_id='.$i.'&lang_id='.$this->idx_current_lang.'"><p>'.$this->menu_items[$this->idx_current_lang][$i].'</p></a>';
+                $s = '<a class="menu_item';
+                if ($i == $this->idx_current_page) $s.= ' current';
+                
+                $s.= '" href="index.php?content_id='.$i.'&lang_id='.$this->idx_current_lang.'">'.$this->menu_items[$this->idx_current_lang][$i].'</a>';
+                
+                echo $s;
             }
         }
         
         function GenerateTitle()
         {
-            echo '<p>'.$this->menu_items[$this->idx_current_lang][$this->idx_current_page].'</p>';
+            echo '<h2>'.$this->menu_items[$this->idx_current_lang][$this->idx_current_page].'</h2>';
         }
         
         function GenerateContent()
@@ -115,10 +160,12 @@
             if (is_dir($template_file))
             {
                 //  attempt to find an actual code file
-                if (file_exists($template_file.DIRECTORY_SEPARATOR.'template.html')) $template_file = $template_file.DIRECTORY_SEPARATOR.'template.html';
-                else if (file_exists($template_file.DIRECTORY_SEPARATOR.'template.php')) $template_file = $template_file.DIRECTORY_SEPARATOR.'template.php';
-                else if (file_exists($template_file.DIRECTORY_SEPARATOR.'index.html')) $template_file = $template_file.DIRECTORY_SEPARATOR.'index.html';
-                else if (file_exists($template_file.DIRECTORY_SEPARATOR.'index.php')) $template_file = $template_file.DIRECTORY_SEPARATOR.'index.php';                
+                $template_file .= DIRECTORY_SEPARATOR; //  reduce string concatenations during next checks
+                if (file_exists($template_file.'template.html')) $template_file .= 'template.html';
+                else if (file_exists($template_file.'template.php')) $template_file .= 'template.php';
+                else if (file_exists($template_file.'index.html')) $template_file .= 'index.html';
+                else if (file_exists($template_file.'index.php')) $template_file .= 'index.php';
+                else return 'template not found';
             }
             
             ob_start();
@@ -132,17 +179,18 @@
         function run()
         {
             $content_id = -1;
-            if (isset($_GET['content_id'])) $content_id = $_GET['content_id'];
+            if (isset($_REQUEST['content_id'])) $content_id = $_REQUEST['content_id'];
 
             $lang_id = -1;
-            if (isset($_GET['lang_id'])) $lang_id = $_GET['lang_id'];
+            if (isset($_REQUEST['lang_id'])) $lang_id = $_REQUEST['lang_id'];
             
             if ($content_id > -1) $this->idx_current_page = $content_id;
             if ($lang_id > -1) $this->idx_current_lang = $lang_id;
 
             $this->loadContentDefs();
             $this->setHeader();
-            echo $this->loadTemplate();            
+            echo $this->loadTemplate();
+            echo qcmsPath;
         }
         
     }

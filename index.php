@@ -1,13 +1,10 @@
 <?php
-    $t0 = microtime(true);
-    
     include 'quarkcms.php';
     
+    TQuarkCMS::instance()->dataPath = 'content';
     TQuarkCMS::instance()->run();
     
-    $t = microtime(true);
-    $delta = ($t - $t0) * 1000;
-    //echo "executed in $delta ms";
+    echo qcmsPath;
 ?>
 
 
