@@ -151,8 +151,19 @@
         
         function GenerateContent()
         {
-            $file = $this->lang_hrefs[$this->idx_current_lang].$this->menu_hrefs[$this->idx_current_page];
-            echo file_get_contents($file);
+            $filename = $this->lang_hrefs[$this->idx_current_lang].$this->menu_hrefs[$this->idx_current_page];
+            $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+            $s = file_get_contents($filename);
+            
+            switch ($ext)
+            {
+                case 'txt':
+                    echo '<pre>'.$s.'</pre>';
+                    break;
+                default:
+                    echo $s;
+                    break;
+            }
         }
 
         function setHeader()
