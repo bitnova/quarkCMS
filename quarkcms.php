@@ -151,7 +151,8 @@
         
         function GenerateContent()
         {
-            include $this->lang_hrefs[$this->idx_current_lang].$this->menu_hrefs[$this->idx_current_page];
+            $file = $this->lang_hrefs[$this->idx_current_lang].$this->menu_hrefs[$this->idx_current_page];
+            echo file_get_contents($file);
         }
 
         function setHeader()
