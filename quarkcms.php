@@ -58,6 +58,9 @@
         var $site_keywords = "";
         var $site_author = "";
         
+        //  Declare location of logo image
+        var $site_logo = "";
+        
         //  Declare template path
         var $template_path = "";
         
@@ -92,6 +95,8 @@
                 $this->site_keywords = $xml->keywords;
                 $this->site_author = $xml->author;
                 
+                if (isset($xml->logo)) $this->site_logo = $xml->logo;
+                
                 if (isset($xml->template)) $this->template_path = $xml->template;
                 
                 for ($i = 0; $i < sizeof($xml->lang); $i++)
@@ -111,6 +116,11 @@
                 }
             }
             else die ("Cannot load content definitions.");
+        }
+        
+        function GenerateLogo()
+        {
+            echo $this->site_logo;
         }
         
         function GenerateLangIcons()

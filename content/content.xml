@@ -4,6 +4,8 @@
     <keywords>.quark, CMS, .quarkCMS, framework, bitnova</keywords>
     <author>bitnova</author>
     
+    <logo>img/quarkCMS.png</logo>
+    
     <template>templates/teletype</template>
         
     <lang>
@@ -12,32 +14,32 @@
     </lang>
     
     <lang>
-	<idx>img/flag_uk.png</idx>
-	<href>content/test_data/</href>
+		<idx>img/flag_uk.png</idx>
+		<href>content/test_data/</href>
     </lang>
     
     <item>
-	<menu_item>Lorem Ipsum</menu_item>
-	<menu_item>Lorem Ipsum</menu_item>
-	<href>lorem_ipsum.html</href>
+		<menu_item>Lorem Ipsum</menu_item>
+		<menu_item>Lorem Ipsum</menu_item>
+		<href>lorem_ipsum.html</href>
     </item>
     
     <item>
-	<menu_item>Scrambled Text</menu_item>
-	<menu_item>Scrambled Text</menu_item>
-	<href>scrambled.html</href>
+		<menu_item>Scrambled Text</menu_item>
+		<menu_item>Scrambled Text</menu_item>
+		<href>scrambled.html</href>
     </item>
     
     <item>
-	<menu_item>Servers Strike</menu_item>
-	<menu_item>Servers Strike</menu_item>
-	<href>strike.html</href>
+		<menu_item>Servers Strike</menu_item>
+		<menu_item>Servers Strike</menu_item>
+		<href>strike.html</href>
     </item>
     
     <item>
-	<menu_item>Text Formats</menu_item>
-	<menu_item>Text Formats</menu_item>
-	<href>test_text.html</href>
+		<menu_item>Text Formats</menu_item>
+		<menu_item>Text Formats</menu_item>
+		<href>test_text.html</href>
     </item>
 
     <item>
