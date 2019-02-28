@@ -89,6 +89,7 @@
             if (file_exists($path))
             {
                 $xml = simplexml_load_file($path);
+                if ($xml === false) die("Content definitions file contains format errors.");
                 
                 //  load site descriptor tags
                 $this->site_title = $xml->title;
@@ -97,10 +98,10 @@
                 $this->site_author = $xml->author;
                 
                 if (isset($xml->logo)) 
-		{
-			if (isset($xml->logo->url)) $this->site_logo = $xml->logo->url;
-			if (isset($xml->logo->style)) $this->site_logoStyle = $xml->logo->style;
-		}
+                {
+                    if (isset($xml->logo->url)) $this->site_logo = $xml->logo->url;
+                    if (isset($xml->logo->style)) $this->site_logoStyle = $xml->logo->style;
+                }
                 
                 if (isset($xml->template)) $this->template_path = $xml->template;
                 
@@ -120,7 +121,7 @@
                     $this->menu_hrefs[$i] = $xml->item[$i]->href;
                 }
             }
-            else die ("Cannot load content definitions.");
+            else die ("Cannot find content definitions file.");
         }
         
         function GenerateLogo()
@@ -156,18 +157,24 @@
         
         function GenerateContent()
         {
-            $filename = $this->lang_hrefs[$this->idx_current_lang].$this->menu_hrefs[$this->idx_current_page];
-            $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
-            $s = file_get_contents($filename);
+            $lang_path = '';
+            if (isset($this->lang_hrefs[$this->idx_current_lang])) $lang_path = $this->lang_hrefs[$this->idx_current_lang];
+            $filename = $lang_path.$this->menu_hrefs[$this->idx_current_page];
             
-            switch ($ext)
+            if (file_exists($filename))
             {
-                case 'txt':
-                    echo '<pre style="white-space: pre-wrap;">'.filter_var($s,FILTER_SANITIZE_SPECIAL_CHARS).'</pre>';
-                    break;
-                default:
-                    echo $s;
-                    break;
+                $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+                $s = file_get_contents($filename);
+                
+                switch ($ext)
+                {
+                    case 'txt':
+                        echo '<pre style="white-space: pre-wrap;">'.filter_var($s,FILTER_SANITIZE_SPECIAL_CHARS).'</pre>';
+                        break;
+                    default:
+                        echo $s;
+                        break;
+                }
             }
         }
 
