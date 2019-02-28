@@ -4,7 +4,10 @@
     <keywords>.quark, CMS, .quarkCMS, framework, bitnova</keywords>
     <author>bitnova</author>
     
-    <logo>img/quarkCMS.png</logo>
+    <logo>
+        <url>img/quarkCMS.png</img>
+        <style>max-width: 256px; filter: invert(1); -webkit-filter: invert(1);</style>
+    </logo>
     
     <template>templates/teletype</template>
         

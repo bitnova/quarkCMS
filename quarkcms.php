@@ -60,6 +60,7 @@
         
         //  Declare location of logo image
         var $site_logo = "";
+	var $site_logoStyle = "";
         
         //  Declare template path
         var $template_path = "";
@@ -95,7 +96,11 @@
                 $this->site_keywords = $xml->keywords;
                 $this->site_author = $xml->author;
                 
-                if (isset($xml->logo)) $this->site_logo = $xml->logo;
+                if (isset($xml->logo)) 
+		{
+			if (isset($xml->logo->url)) $this->site_logo = $xml->logo->url;
+			if (isset($xml->logo->style)) $this->site_logoStyle = $xml->logo->style;
+		}
                 
                 if (isset($xml->template)) $this->template_path = $xml->template;
                 
@@ -120,7 +125,7 @@
         
         function GenerateLogo()
         {
-            echo $this->site_logo;
+            echo '<img style="'.$this->site_logoStyle.'" src="'.$this->site_logo.'" />';
         }
         
         function GenerateLangIcons()
@@ -158,7 +163,7 @@
             switch ($ext)
             {
                 case 'txt':
-                    echo '<pre>'.$s.'</pre>';
+                    echo '<pre style="white-space: pre-wrap;">'.filter_var($s,FILTER_SANITIZE_SPECIAL_CHARS).'</pre>';
                     break;
                 default:
                     echo $s;
