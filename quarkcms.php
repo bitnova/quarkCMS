@@ -33,6 +33,26 @@
         echo $js;
     }
     
+    require_once 'BaseGenerator.php';
+    
+    //  autoloader function
+    function quarkCMS_autoloader($class)
+    {
+        //global $quark_widgets_dir;
+        //global $WidgetCollection;
+        
+        $filename = $class.'.php';
+        if ($filename[0] = 'T') $filename = substr($filename, 1);
+        include $filename;
+        
+/*        if (isWidget($class))
+        {
+            $WidgetCollection[] = $class;
+            TQuark::instance()->updateWidgetThemes($class);
+        }*/
+    }
+    
+    spl_autoload_register('quarkCMS_autoloader');
     
     class TQuarkCMS //extends TRPCService
     {
@@ -60,7 +80,7 @@
         
         //  Declare location of logo image
         var $site_logo = "";
-	var $site_logoStyle = "";
+        var $site_logoStyle = "";
         
         //  Declare template path
         var $template_path = "";
@@ -124,58 +144,14 @@
             else die ("Cannot find content definitions file.");
         }
         
-        function GenerateLogo()
-        {
-            echo '<img style="'.$this->site_logoStyle.'" src="'.$this->site_logo.'" />';
-        }
-        
         function GenerateLangIcons()
         {
+            $result = '';
             for ($i = 0; $i < count($this->lang_idxs); $i++)
             {
-                echo '<a href="index.php?content_id='.$this->idx_current_page.'&lang_id='.$i.'"><img class="lang" src="'.$this->lang_idxs[$i].'"/></a>';
+                $result.= '<a href="index.php?content_id='.$this->idx_current_page.'&lang_id='.$i.'"><img class="lang" src="'.$this->lang_idxs[$i].'"/></a>';
             }
-        }
-        
-        function GenerateMenu()
-        {
-            for ($i = 0; $i < count($this->menu_items[$this->idx_current_lang]); $i++)
-            {
-                $s = '<a class="menu_item';
-                if ($i == $this->idx_current_page) $s.= ' current';
-                
-                $s.= '" href="index.php?content_id='.$i.'&lang_id='.$this->idx_current_lang.'">'.$this->menu_items[$this->idx_current_lang][$i].'</a>';
-                
-                echo $s;
-            }
-        }
-        
-        function GenerateTitle()
-        {
-            echo '<h2>'.$this->menu_items[$this->idx_current_lang][$this->idx_current_page].'</h2>';
-        }
-        
-        function GenerateContent()
-        {
-            $lang_path = '';
-            if (isset($this->lang_hrefs[$this->idx_current_lang])) $lang_path = $this->lang_hrefs[$this->idx_current_lang];
-            $filename = $lang_path.$this->menu_hrefs[$this->idx_current_page];
-            
-            if (file_exists($filename))
-            {
-                $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
-                $s = file_get_contents($filename);
-                
-                switch ($ext)
-                {
-                    case 'txt':
-                        echo '<pre style="white-space: pre-wrap;">'.filter_var($s,FILTER_SANITIZE_SPECIAL_CHARS).'</pre>';
-                        break;
-                    default:
-                        echo $s;
-                        break;
-                }
-            }
+            return $result;
         }
 
         function setHeader()
@@ -204,10 +180,65 @@
             
             ob_start();
             include $template_file;
-            $s = ob_get_contents();
+            $buffer = ob_get_contents();
             ob_end_clean();
             
-            return $s;
+            //  parse the output buffer for quark tags and collect them
+            $result = '';
+            $tags = array();
+            
+            $idx_start = strpos($buffer, '<q:');
+            while ($idx_start !== false)
+            {
+                $idx_stop = strpos($buffer, '/>', $idx_start);
+                if ($idx_stop === false) $idx_stop = strpos($buffer, '<', $idx_start + 1); else $idx_stop++; 
+                if ($idx_stop === false) $idx_stop = strlen($buffer) - 1;
+                $len = $idx_stop - $idx_start + 1;
+                
+                $str_tag = substr($buffer, $idx_start + 3, $len - 3); //  skip the <q: part and avoid a second substr
+                $str_tag = strtolower(trim($str_tag, " \t/>")); //  cut any space, tab, slash or greater signs
+                
+                $tag_rec = array('tag' => $str_tag, 'start' => $idx_start, 'stop' => $idx_stop);
+                $tags[] = $tag_rec;
+                
+                $idx_start = strpos($buffer, '<q:', $idx_stop); //  get the position of the next quark tag
+            }
+
+            //  rebuild the output while processing each content placeholder
+            $offset = 0;
+            foreach ($tags as $tag)
+            {
+                $result.= substr($buffer, $offset, $tag['start'] - $offset);
+                
+                //  search for a content generator based on the tag name
+                $GeneratorName = 'T'.ucfirst($tag['tag']).'Generator';
+                if (class_exists($GeneratorName, $autoload = true)) 
+                {
+                    $Generator = new $GeneratorName();
+                    $result.= $Generator->render();
+                }
+                
+                /*switch ($tag['tag'])
+                {
+                    case 'logo':
+                        $result.= $this->GenerateLogo();
+                        break;
+                    case 'title':
+                        $result.= $this->GenerateTitle();
+                        break;
+                    case 'menu':
+                        $result.= $this->GenerateMenu();
+                        break;
+                    case 'content':
+                        $result.= $this->GenerateContent();
+                        break;
+                }*/
+                
+                $offset = $tag['stop'] + 1;                
+            }
+            $result.= substr($buffer, $offset); //  copy the rest of the output buffer
+            
+            return $result;
         }
         
         function run()
