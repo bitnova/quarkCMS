@@ -162,81 +162,48 @@
             echo '<meta name="author" content="'.$this->site_author.'"/>';           
         }
         
-        function loadTemplate()
+        function process(string $text)
         {
-            if (!file_exists($this->template_path)) return 'template not found';
-            
-            $template_file = $this->template_path;            
-            if (is_dir($template_file))
-            {
-                //  attempt to find an actual code file
-                $template_file .= DIRECTORY_SEPARATOR; //  reduce string concatenations during next checks
-                if (file_exists($template_file.'template.html')) $template_file .= 'template.html';
-                else if (file_exists($template_file.'template.php')) $template_file .= 'template.php';
-                else if (file_exists($template_file.'index.html')) $template_file .= 'index.html';
-                else if (file_exists($template_file.'index.php')) $template_file .= 'index.php';
-                else return 'template not found';
-            }
-            
-            ob_start();
-            include $template_file;
-            $buffer = ob_get_contents();
-            ob_end_clean();
-            
-            //  parse the output buffer for quark tags and collect them
+            //  parse the text for quark tags and collect them into an array alongside
+            //  their start and end position
             $result = '';
             $tags = array();
             
-            $idx_start = strpos($buffer, '<q:');
+            $idx_start = strpos($text, '<q:');
             while ($idx_start !== false)
             {
-                $idx_stop = strpos($buffer, '/>', $idx_start);
-                if ($idx_stop === false) $idx_stop = strpos($buffer, '<', $idx_start + 1); else $idx_stop++; 
-                if ($idx_stop === false) $idx_stop = strlen($buffer) - 1;
+                $idx_stop = strpos($text, '/>', $idx_start);
+                if ($idx_stop === false) $idx_stop = strpos($text, '<', $idx_start + 1); else $idx_stop++; 
+                if ($idx_stop === false) $idx_stop = strlen($text) - 1;
                 $len = $idx_stop - $idx_start + 1;
                 
-                $str_tag = substr($buffer, $idx_start + 3, $len - 3); //  skip the <q: part and avoid a second substr
+                $str_tag = substr($text, $idx_start + 3, $len - 3); //  skip the <q: part and avoid a second substr
                 $str_tag = strtolower(trim($str_tag, " \t/>")); //  cut any space, tab, slash or greater signs
                 
                 $tag_rec = array('tag' => $str_tag, 'start' => $idx_start, 'stop' => $idx_stop);
                 $tags[] = $tag_rec;
                 
-                $idx_start = strpos($buffer, '<q:', $idx_stop); //  get the position of the next quark tag
+                $idx_start = strpos($text, '<q:', $idx_stop); //  get the position of the next quark tag
             }
 
-            //  rebuild the output while processing each content placeholder
+            //  rebuild the output by processing each content placeholder in the array
+            //  and copying the in between bits directly from the input text
             $offset = 0;
             foreach ($tags as $tag)
             {
-                $result.= substr($buffer, $offset, $tag['start'] - $offset);
+                $result.= substr($text, $offset, $tag['start'] - $offset);
                 
                 //  search for a content generator based on the tag name
                 $GeneratorName = 'T'.ucfirst($tag['tag']).'Generator';
                 if (class_exists($GeneratorName, $autoload = true)) 
                 {
                     $Generator = new $GeneratorName();
-                    $result.= $Generator->render();
+                    $result.= $Generator->generate();
                 }
-                
-                /*switch ($tag['tag'])
-                {
-                    case 'logo':
-                        $result.= $this->GenerateLogo();
-                        break;
-                    case 'title':
-                        $result.= $this->GenerateTitle();
-                        break;
-                    case 'menu':
-                        $result.= $this->GenerateMenu();
-                        break;
-                    case 'content':
-                        $result.= $this->GenerateContent();
-                        break;
-                }*/
                 
                 $offset = $tag['stop'] + 1;                
             }
-            $result.= substr($buffer, $offset); //  copy the rest of the output buffer
+            $result.= substr($text, $offset); //  copy the rest of the output buffer
             
             return $result;
         }
@@ -254,8 +221,8 @@
 
             $this->loadContentDefs();
             $this->setHeader();
-            echo $this->loadTemplate();
-            echo qcmsPath;
+            echo $this->process('<q:template />');
+            //echo qcmsPath;
         }
         
     }
