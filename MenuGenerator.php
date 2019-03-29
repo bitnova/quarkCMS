@@ -2,7 +2,7 @@
 
     class TMenuGenerator extends TBaseGenerator
     {
-        function render()
+        function render($attr = null, $innerText = null)
         {
             $cms = TQuarkCMS::instance();
             

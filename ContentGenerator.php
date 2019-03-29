@@ -2,7 +2,7 @@
 
     class TContentGenerator extends TBaseGenerator
     {
-        function render()
+        function render($attr = null, $innerText = null)
         {
             $cms = TQuarkCMS::instance();
             
@@ -18,13 +18,18 @@
                 switch ($ext)
                 {
                     case 'txt':
-                        return '<pre style="white-space: pre-wrap;">'.filter_var($s,FILTER_SANITIZE_SPECIAL_CHARS).'</pre>';
-                        break;
+                        $s = str_replace('[<', '::start::', $s);
+                        $s = str_replace('>]', '::stop::', $s);
+                        $s = '<pre style="white-space: pre-wrap;">'.filter_var($s, FILTER_SANITIZE_SPECIAL_CHARS).'</pre>';
+                        $s = str_replace('::start::', '<', $s);
+                        $s = str_replace('::stop::', '>', $s);
+                        return $s;
                     default:
                         return $s;
                         break;
                 }
             }
+            else return 'Content source not found'.' '.$filename;
         }
     }
     

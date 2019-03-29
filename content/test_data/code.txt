@@ -1,0 +1,40 @@
+<span>Following is some code written in pascal language:</span><br/><br/>
+
+[<q:code>]
+	program HelloWorld;
+
+	type TSimpleClass = class(TObject)
+			    private
+			     FAttribute: integer;
+			     function GetAttribute: integer;
+			     procedure SetAttribute(Value: integer);
+			    public
+			     Attribute: integer read GetAttribute write SetAttribute;
+
+			     constructor Create; virtual;
+			     destructor Destroy; override;
+			    end;
+
+	function TSimpleClass.GetAttribute: integer;
+	 begin
+	 end;
+
+	procedure TSimpleClass.SetAttribute(Value: integer);
+	 begin
+	 end;
+
+	constructor TSimpleClass.Create; virtual;
+	 begin
+	  FAttribute:= 0;
+	 end;
+
+	destructor TSimpleClass.Destroy; override;
+	 begin
+	  inherited;
+	 end;
+
+	begin
+		writeln('Hello World');
+	end.
+[</q:code>]
+

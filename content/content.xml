@@ -51,6 +51,18 @@
 		<href>scrolltext.html</href>
     </item>
     
+    <item>
+    		<menu_item>Code Example</menu_item>
+		<menu_item>Code Example</menu_item>
+		<href>code.txt</href>
+    </item>
+    
+    <item>
+    	<menu_item>Documentation</menu_item>
+    	<menu_item>Documentation</menu_item>
+    	<href>../../doc/toc.html</href>
+    </item>
+    
     <idx_current_page>0</idx_current_page>
     <idx_current_lang>0</idx_current_lang>
     

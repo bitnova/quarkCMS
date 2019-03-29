@@ -38,18 +38,9 @@
     //  autoloader function
     function quarkCMS_autoloader($class)
     {
-        //global $quark_widgets_dir;
-        //global $WidgetCollection;
-        
         $filename = $class.'.php';
         if ($filename[0] = 'T') $filename = substr($filename, 1);
-        include $filename;
-        
-/*        if (isWidget($class))
-        {
-            $WidgetCollection[] = $class;
-            TQuark::instance()->updateWidgetThemes($class);
-        }*/
+        include $filename;        
     }
     
     spl_autoload_register('quarkCMS_autoloader');
@@ -162,6 +153,51 @@
             echo '<meta name="author" content="'.$this->site_author.'"/>';           
         }
         
+        function fasterTag($s)
+        {
+            $result = array();
+            $spaces = array(' ', "\t");
+            $len = strlen($s) - 1; $i = 0; $char = $s[$i];
+            
+            //  parse tag name
+            $key = '';
+            while (in_array($char, $spaces) && $i < $len) { $i++; $char = $s[$i]; } // skip any space in the beginning
+            while (!in_array($char, $spaces) && $i < $len) { $key.= $char; $i++; $char = $s[$i]; };
+            if ($i == $len) $key.= $char;
+            $result['tag'] = $key;
+            
+            //  parse attributes
+            while ($i < $len)
+            {
+                $key = '';
+                while (in_array($char, $spaces) && $i < $len) { $i++; $char = $s[$i]; } // skip any space after the element and before attributes
+                while (!in_array($char, $spaces) && $char != '=' && $i < $len) { $key.= $char; $i++; $char = $s[$i]; }
+                if ($char != '=')
+                    while (in_array($char, $spaces) && $i < $len) { $i++; $char = $s[$i]; } // skip any space after the element and before attributes
+                    
+                if ($char = '=' && $i < $len)
+                {
+                    $value = ''; $i++; $char = $s[$i];
+                    while (in_array($char, $spaces) && $i < $len) { $i++; $char = $s[$i]; } // skip any space after the element and before attributes
+                    
+                    $marker = '';
+                    if (($char == '"' || $char == "'") && $i < $len)
+                    {
+                        $marker = $char; $i++; $char = $s[$i];
+                        while ($char != $marker && $i < $len) { $value.= $char; $i++; $char = $s[$i]; }
+                        if ($i < $len) { $i++; $char = $s[$i]; }
+                    }
+                    else
+                        while (!in_array($char, $spaces) && $i < $len) { $i++; $char = $s[$i]; }
+                    
+                    $result[$key] = $value;
+                }
+                else $result[$key] = '';
+            }
+            
+            return $result;
+        }
+        
         function process(string $text)
         {
             //  parse the text for quark tags and collect them into an array alongside
@@ -169,23 +205,73 @@
             $result = '';
             $tags = array();
             
-            $idx_start = strpos($text, '<q:');
+            $idx_start = strpos($text, '<q:'); //  search for the first occurence of a quark tag
             while ($idx_start !== false)
             {
-                $idx_stop = strpos($text, '/>', $idx_start);
-                if ($idx_stop === false) $idx_stop = strpos($text, '<', $idx_start + 1); else $idx_stop++; 
-                if ($idx_stop === false) $idx_stop = strlen($text) - 1;
-                $len = $idx_stop - $idx_start + 1;
+                //  assume some properties of the found tag
+                $selfclosed = true;
+                $malformed = false;
                 
-                $str_tag = substr($text, $idx_start + 3, $len - 3); //  skip the <q: part and avoid a second substr
-                $str_tag = strtolower(trim($str_tag, " \t/>")); //  cut any space, tab, slash or greater signs
+                //  locate tag and determine if it is malformed, selfclosed or not
+                $idxs = $idx_start + 3; //  avoids a few adds in the next lines
+                $idx_next = strpos($text, '<', $idxs);  //  take the pos of the next tag opening to check for format errors
+                $idx_stop = strpos($text, '/>', $idxs); //  locate the end of the tag as if it is an autoclosing one
+                if ($idx_stop === false || $idx_next < $idx_stop)
+                {
+                    //  self closing marker not found, it might be an error or there could be a separate closing tag
+                    $idx_stop = strpos($text, '>', $idxs);
+                    
+                    if ($idx_stop === false || $idx_next < $idx_stop)
+                    {
+                        //  a new tag is opened before closing the current one or we simply get to EOF
+                        $malformed = true;
+                        
+                        //  we'll attempt to decode the unclosed tag
+                        if ($idx_stop === false) $idx_stop = strlen($string) - 1;
+                        else $idx_stop = $idx_stop - 1;
+                    }
+                    else $selfclosed = false; //  we'll have to search for the closing tag
+                }
+                else $idx_stop++;
                 
-                $tag_rec = array('tag' => $str_tag, 'start' => $idx_start, 'stop' => $idx_stop);
-                $tags[] = $tag_rec;
+                //  extract tag info
+                $len = $idx_stop - $idx_start - 2; // it's actually + 1 - 3
+                $str_tag = substr($text, $idxs, $len); //  skip the <q: part and avoid a second substr
+                $str_tag = trim($str_tag, " \t/>"); //  cut any space, tab, slash or greater signs
                 
-                $idx_start = strpos($text, '<q:', $idx_stop); //  get the position of the next quark tag
+                $parts = $this->fasterTag($str_tag);
+                if (sizeof($parts) >= 1)
+                {
+                    $attr = array();
+                    foreach ($parts as $key => $value)
+                    {
+                        if ($key == 'tag') $str_tag = $value;
+                        else $attr[$key] = $value;
+                    }
+                    
+                    $str_inner = '';
+                    if (!$selfclosed)
+                    {
+                        $search = '</q:'.$str_tag.'>';
+                        $idx = strpos($text, $search, $idx_stop);
+                        if ($idx !== false)
+                        {
+                            $str_inner = substr($text, $idx_stop + 1, $idx - $idx_stop - 1);
+                            $idx_stop = $idx + strlen($search) - 1;
+                        }
+                    }
+                    
+                    //  save gathered information
+                    $tag_rec = array('tag' => $str_tag, 'start' => $idx_start, 'stop' => $idx_stop);
+                    if (sizeof($attr) > 0) $tag_rec['attr'] = $attr;
+                    if (!empty($str_inner)) $tag_rec['inner'] = $str_inner;
+                    $tags[] = $tag_rec;
+                }
+                
+                //  get the position of the next quark tag and continue searching
+                $idx_start = strpos($text, '<q:', $idx_stop);
             }
-
+            
             //  rebuild the output by processing each content placeholder in the array
             //  and copying the in between bits directly from the input text
             $offset = 0;
@@ -198,7 +284,9 @@
                 if (class_exists($GeneratorName, $autoload = true)) 
                 {
                     $Generator = new $GeneratorName();
-                    $result.= $Generator->generate();
+                    $attr = null; if (isset($tag['attr'])) $attr = $tag['attr'];
+                    $innerText = null; if (isset($tag['inner'])) $innerText = $tag['inner'];
+                    $result.= $Generator->generate($attr, $innerText);
                 }
                 
                 $offset = $tag['stop'] + 1;                
