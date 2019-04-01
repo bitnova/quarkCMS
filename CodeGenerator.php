@@ -2,29 +2,34 @@
 
     class TCodeGenerator extends TBaseGenerator
     {
-        function render($attr = null, $innerText = null)
+        static private $Finstance = null;
+        static function instance()
+        {
+            if (self::$Finstance != null) return self::$Finstance;
+            
+            self::$Finstance = new self();
+            return self::$Finstance;
+        }
+        
+        
+        private $echoed = false;
+        function echoStyle()
         {
             $style = '
 <style>
-    pre
-    {
-        max-height: 40em;
-        overflow: scroll;
-    }
-
-    pre.syntax code
+    pre.listing code
     {
         font-family: monospace;
         counter-reset: codeline;
     }
-
-    pre.syntax code span
+                
+    pre.listing code span
     {
         display: block;
         line-height: 1.5em;
     }
-
-    pre.syntax code span:before
+                
+    pre.listing code span:before
     {
         counter-increment: codeline;
         content: counter(codeline);
@@ -53,15 +58,30 @@
             str_out += "<span>" + lines[i] + "</span>";
         }
         code.innerHTML = str_out;
-    }
-     
-    highlight("code");   
+    }                
 </script>
-';
-            
-            echo $style."\n";
-            echo '<pre class="syntax"><code id="code">'.$innerText.'</code></pre>'."\n";
-            echo $js;            
+';   
+            if (!$this->echoed)
+            {
+                echo $style."\n";
+                echo $js."\n";
+                $this->echoed = true;
+            }
+        }
+        
+        private $count = 0;
+        private function generateId()
+        {
+            $this->count++;
+            return 'listing_'.$this->count;
+        }
+        
+        function render($attr = null, $innerText = null)
+        {
+            self::instance()->echoStyle();
+            $id = self::$Finstance->generateId();
+            echo '<pre class="listing" style="max-height: 40em; overflow: auto;"><code id="'.$id.'">'.$innerText.'</code></pre>'."\n";
+            echo '<script>highlight("'.$id.'");</script>';            
         }
     }
 
