@@ -1,4 +1,6 @@
-<span>Following is some code written in pascal language:</span><br/><br/>
+This is a link tag enclosed in square brackets [<a href="qwerty">]This will not lead anywhere[</a>]
+
+Following is some code written in pascal language:
 
 [<q:code>]
 	program HelloWorld;

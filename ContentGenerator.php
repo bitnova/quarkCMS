@@ -20,7 +20,7 @@
                     case 'txt':
                         $s = str_replace('[<', '::start::', $s);
                         $s = str_replace('>]', '::stop::', $s);
-                        $s = '<pre style="white-space: pre-wrap;">'.filter_var($s, FILTER_SANITIZE_SPECIAL_CHARS).'</pre>';
+                        $s = '<pre style="white-space: pre-wrap;">'.filter_var($s, FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES).'</pre>';
                         $s = str_replace('::start::', '<', $s);
                         $s = str_replace('::stop::', '>', $s);
                         return $s;
