@@ -13,19 +13,20 @@
             if (file_exists($filename))
             {
                 $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
-                $s = file_get_contents($filename);
+                $str = file_get_contents($filename);
                 
                 switch ($ext)
                 {
                     case 'txt':
-                        $s = str_replace('[<', '::start::', $s);
-                        $s = str_replace('>]', '::stop::', $s);
-                        $s = '<pre style="white-space: pre-wrap;">'.filter_var($s, FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES).'</pre>';
-                        $s = str_replace('::start::', '<', $s);
-                        $s = str_replace('::stop::', '>', $s);
-                        return $s;
+                        $str = str_replace('[<', '::start::', $str);
+                        $str = str_replace('>]', '::stop::', $str);
+                        $str = htmlspecialchars($str, ENT_NOQUOTES);
+                        $str = '<pre style="white-space: pre-wrap;">'.$str.'</pre>';
+                        $str = str_replace('::start::', '<', $str);
+                        $str = str_replace('::stop::', '>', $str);
+                        return $str;
                     default:
-                        return $s;
+                        return $str;
                         break;
                 }
             }

@@ -1,6 +1,6 @@
 <?php
 
-    class TCodeGenerator extends TBaseGenerator
+    class TListingGenerator extends TBaseGenerator
     {
         static private $Finstance = null;
         static function instance()
