@@ -1,0 +1,15 @@
+quarkCMS is meant to be a lightweight fast Content Management System tailored on various purposes, from simple presentation websites, blogs to full fledged content streaming and news reporting sites... or at least this is the objective. 
+
+<p>Following is a set of guide rules on which quarkCMS is designed and built upon:
+
+<ol>
+	<li>It should be very light, under one megabyte (we’ll exclude here template files, icons and other graphical items yet they should not take much space either). In its first few iterations, it should allow a simple management of blog articles, such as this one;</li>
+	<li>The database should be optional at best, a use of a cache functionality of some sort would be much preferred. It could be a plugin system where the actual content would be served by a default or custom data layer, depending on each installation;</li>
+	<li>No jQuery. It may sound plainly stupid for many web developers but I have yet to find the irrefutable advantage of using it other than the fact that allows a quick AJAX (solved in .quark) and possibility of element selection on a variety of attribute types (which is also solved when you decide you will only access through ids);</	li>
+	<li>When so desired, it should be able to work on top of .quarkOS as a service and take advantage of its functionality, such as communication with other apps, use of built-in AJAX capability, forms etc;</li>
+	<li>Allow the development and integration of components for displaying specific content (such as product pages on an e-commerce site).</li>
+</ol>
+</p>
+
+At its core, quarkCMS is a simple manager for content declarations and a recursive text parser. Every piece of custom content is generated through content generators which can be considered as plugins called from within portions of content through custom html tags. Every link, menu, title, image and even the design template of the site are generated using these plugins.
+

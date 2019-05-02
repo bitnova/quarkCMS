@@ -17,7 +17,7 @@
 	
 	<menu name="main">
 		<item default:caption="Examples" ro-RO:caption="Exemple" ref="examples"/>
-		<item default:caption="Documentation" ro-RO:caption="Documentatie" ref="documentation"/>
+		<item default:caption="Documentation" ro-RO:caption="Documentatie" ref="doc"/>
 	</menu>
 	
 	<content name="examples" default="Examples" ro-RO="Exemple" url="content/test_data/examples.html">
@@ -42,8 +42,16 @@
 		<content name="code" default="Code &amp; Custom Tags" ro-RO="Cod &amp; Tag-uri Custom" url="content/test_data/code.txt"/>	
 	</content>
 	
-	<content name="documentation" default="Documentation" ro-RO="Documentatie" url="content/test_data/doc/toc.html">
-		<content default="Principles" ro-RO="Principii" url=""/>
-		<content default="Content Generators" ro-RO="Generatoare de Continut" url=""/>
+	<content name="doc" default="Documentation" ro-RO="Documentatie" url="content/doc/toc.html">
+		
+		<menu name="menu-doc">
+			<item default:caption="Principles" ref="doc-general"/>
+			<item default:caption="Content Generators" ref="doc-generators"/>
+			<item default:caption="Content Structure" ref="doc-contentdefs"/>
+		</menu>
+		
+		<content name="doc-general" default="General Concepts" ro-RO="Concepte Generale" url="content/doc/general.html"/>
+		<content name="doc-generators" default="Content Generators" ro-RO="Generatoare de Continut" url="content/doc/generators.html"/>
+		<content name="doc-contentdefs" default:caption="Content Structure" default:ro-RO="Structura Continutului" url="content/doc/contentdefs.html"/>
 	</content>
 </content>

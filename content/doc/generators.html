@@ -1,0 +1,24 @@
+A content generator is a php class derived from TBaseGenerator which is included at runtime when necessary. The mechanism of the content generator is implemented by overriding the render(...) function of the ancestor class.
+
+<q:listing>
+	&lt;?php
+
+	class TFooGenerator extends TBaseGenerator
+	{
+		//  the render functions receives the node attributes and the inner text of the node as arguments
+		//  to process them as it sees fit
+		function render($attr = null, $innerText = null)
+		{
+			//  either return a string containing the content
+			return '&lt;span&gt;foo was here&lt;/span&gt;';
+			
+			//  or you can simply echo it 
+			echo '&lt;span&gt;foo was here&lt;/span&gt;';
+
+			//  but don't do both, the framework will look at the function result first and 
+			//  will ignore the echoed text if the result is not empty
+		}
+	}
+
+	?&gt;
+</q:listing>
