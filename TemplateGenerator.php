@@ -5,10 +5,12 @@
         function render($attr = null, $innerText = null)
         {
             $cms = TQuarkCMS::instance();
+            $def = $cms->getContentByType('template');
             
-            if (!file_exists($cms->template_path)) return 'template not found';
+            $template_file = '';
+            if (isset($def['default']) && isset($def['default']['url'])) $template_file = $def['default']['url'];
+            if (!file_exists($template_file)) return 'template not found';
             
-            $template_file = $cms->template_path;
             if (is_dir($template_file))
             {
                 //  attempt to find an actual code file

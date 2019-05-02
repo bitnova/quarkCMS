@@ -5,7 +5,17 @@
         function render($attr = null, $innerText = null)
         {
             $cms = TQuarkCMS::instance();
-            return '<img style="'.$cms->site_logoStyle.'" src="'.$cms->site_logo.'" />';
+            $def = $cms->getContentByType('logo');
+            
+            $filename = '';
+            $style = '';
+            if (isset($def['default']))
+            {
+                if (isset($def['default']['url'])) $filename = $def['default']['url'];
+                if (isset($def['default']['style'])) $style = $def['default']['style'];
+            }
+            
+            return '<img style="'.$style.'" src="'.$filename.'" />';
         }
     }
 

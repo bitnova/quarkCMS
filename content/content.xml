@@ -1,69 +1,49 @@
-<content>
-    <title>.quarkCMS, the lightweight alternative</title>
-    <description>.quarkCMS, fast lightweight CMS for all basic needs</description>
-    <keywords>.quark, CMS, .quarkCMS, framework, bitnova</keywords>
-    <author>bitnova</author>
-    
-    <logo>
-        <url>img/quarkCMS.png</url>
-        <style>max-width: 256px; filter: invert(1); -webkit-filter: invert(1);</style>
-    </logo>
-    
-    <template>templates/teletype</template>
-        
-    <lang>
-        <idx>img/flag_ro.png</idx>
-        <href>content/test_data/</href>
-    </lang>
-    
-    <lang>
-		<idx>img/flag_uk.png</idx>
-		<href>content/test_data/</href>
-    </lang>
-    
-    <item>
-		<menu_item>Lorem Ipsum</menu_item>
-		<menu_item>Lorem Ipsum</menu_item>
-		<href>lorem_ipsum.html</href>
-    </item>
-    
-    <item>
-		<menu_item>Scrambled Text</menu_item>
-		<menu_item>Scrambled Text</menu_item>
-		<href>scrambled.html</href>
-    </item>
-    
-    <item>
-		<menu_item>Servers Strike</menu_item>
-		<menu_item>Servers Strike</menu_item>
-		<href>strike.html</href>
-    </item>
-    
-    <item>
-		<menu_item>Text Formats</menu_item>
-		<menu_item>Text Formats</menu_item>
-		<href>test_text.html</href>
-    </item>
-
-    <item>
-		<menu_item>Scroll Text</menu_item>
-		<menu_item>Scroll Text</menu_item>
-		<href>scrolltext.html</href>
-    </item>
-    
-    <item>
-    		<menu_item>Code &amp; Custom Tags</menu_item>
-		<menu_item>Code &amp; Custom Tags</menu_item>
-		<href>code.txt</href>
-    </item>
-    
-    <item>
-    	<menu_item>Documentation</menu_item>
-    	<menu_item>Documentation</menu_item>
-    	<href>../../doc/toc.html</href>
-    </item>
-    
-    <idx_current_page>0</idx_current_page>
-    <idx_current_lang>0</idx_current_lang>
-    
+<content xmlns:default="http://content/default" xmlns:ro-RO="http://content/ro-RO">
+	<meta name="title">
+		<default:text>.quarkCMS, lightweight alternative</default:text>
+		<ro-RO:text>.quarkCMS, alternativa light</ro-RO:text>
+	</meta>
+	<meta name="description" text="one very fast and lightweight CMS for all basic needs and more" />
+	<meta name="keywords" text=".quark, CMS, .quarkCMS, framework, bitnova"/>
+	<meta name="author" text="bitnova"/>
+	
+	<resource name="favicon" type="image" url="favicon.png"/>
+	<resource name="lang_ro" type="image" url="img/flag_ro.png"/>
+	<resource name="lang_en" type="image" url="img/flag_en.png"/>
+	
+	<logo name="quarkCMS" url="img/quarkCMS.png" style="max-width: 256px; filter: invert(1); -webkit-filter: invert(1);"/>
+	
+	<template name="teletype" url="templates/teletype"/>
+	
+	<menu name="main">
+		<item default:caption="Examples" ro-RO:caption="Exemple" ref="examples"/>
+		<item default:caption="Documentation" ro-RO:caption="Documentatie" ref="documentation"/>
+	</menu>
+	
+	<content name="examples" default="Examples" ro-RO="Exemple" url="content/test_data/examples.html">
+		
+		<menu name="menu-examples">
+			<item default:caption="Lorem Ipsum" ro-RO:caption="Lorem Ipsum" ref="lorem-ipsum"/>
+			<item default:caption="Scrambled Text" ro-RO:caption="Cuvinte permutate" ref="scrambled"/>
+			<item default:caption="Servers Strike" ro-RO:caption="Greva Serverelor" ref="server-strike"/>
+			<item default:caption="Text Formats" ro-RO:caption="Formate Text" ref="text-formats"/>
+			<item default:caption="Scroll Text" ro-RO:caption="Text Derulant" ref="scroll-text"/>
+			<item default:caption="Code &amp; Custom Tags" ro-RO:caption="Cod &amp; Tag-uri Custom" ref="code"/>			
+		</menu>
+		
+		<content name="lorem-ipsum" default:caption="Lorem Ipsum" ro-RO:caption="Lorem Ipsum" url="content/test_data/lorem_ipsum.html"/>
+		<content name="scrambled" default="Scrambled Text" ro-RO="Cuvinte Permutate" url="content/test_data/scrambled.html"/>
+		<content name="server-strike" url="content/test_data/strike.html">
+			<default>Servers Strike</default>
+			<ro-RO>Greva Serverelor</ro-RO>
+		</content>
+		<content name="text-formats" default="Text Formats" ro-RO="Formate Text" url="content/test_data/test_text.html"/>
+		<content name="scroll-text" default="Scroll Text" ro-RO="Text Derulant" url="content/test_data/scrolltext.html"/>
+		<content name="code" default="Code &amp; Custom Tags" ro-RO="Cod &amp; Tag-uri Custom" url="content/test_data/code.txt"/>	
+	</content>
+	
+	<content name="documentation" default="Documentation" ro-RO="Documentatie" url="content/test_data/doc/toc.html">
+		<content default="Principles" ro-RO="Principii" url=""/>
+		<content default="Content Generators" ro-RO="Generatoare de Continut" url=""/>
+	</content>
 </content>

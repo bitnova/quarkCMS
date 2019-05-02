@@ -1,8 +1,5 @@
 <?php
 
-    $quarkCMSTimeOrigin = microtime(true);
-
-
     //-------------------------------------------------------------------------------------------------------
     //  determine working directory
     $qcmsPath = __DIR__;
@@ -19,21 +16,15 @@
         //  do error checking
         
         //  measure script execution time and write it in the browser window object
-        global $quarkCMSTimeOrigin;
         $t = round((microtime(true) - $_SERVER['REQUEST_TIME_FLOAT']) * 1000, 3); //  available since PHP 5.4.0
-        /*$js =   '<script type="text/javascript">'."\n".
-                '   window.addEventListener("load", quarkCMSLoad);'."\n".
-                '   function quarkCMSLoad()'."\n".
-                '   {'."\n".
-                '      window.serverExecutionTime = '.(string)$t.';'."\n".
-                '   }'."\n".
-                '</script>';*/
+
         //  this should be executed immediately instead of using onload event
         $js =   '<script type="text/javascript">window.serverExecutionTime = '.(string)$t.';</script>';
         echo $js;
     }
     
     require_once 'BaseGenerator.php';
+    require_once 'ContentDefs.php';
     
     //  autoloader function
     function quarkCMS_autoloader($class)
@@ -84,13 +75,107 @@
         var $menu_items = array();
         var $menu_hrefs = array();
         
+        var $content = array();
+        
         //  Current content page -- set default here
         var $idx_current_page = 0;
         
         //  Current language index -- set default here
         var $idx_current_lang = 0;
         
+        function getContentByKey(string $key, $value, $content = null)
+        {
+            if ($content == null) $content = $this->content;
+            if (!isset($content['items'])) return null;
+            
+            foreach ($content['items'] as $item)
+            {
+                if (is_array($item) && isset($item[$key]) && $item[$key] == $value) return $item;
+            }
+                
+            foreach ($content['items'] as $item)
+            {
+                $result = $this->getContentByKey($key, $value, $item);
+                if ($result != null) return $result;
+            }
+            
+            return null;
+        }
+        
+        function getContentByType(string $type, $content = null) { return $this->getContentByKey('type', $type, $content); }
+        function getContentById(int $id, $content = null) { return $this->getContentByKey('id', $id, $content); }
+        function getContentByName(string $name, $content = null) { return $this->getContentByKey('name', $name, $content); }
+        
+        function getParentContentById(int $id, $content = null)
+        {
+            if ($content == null) $content = $this->content;
+            if (!isset($content['items'])) return null;
+            
+            foreach ($content['items'] as $item)
+            {
+                if (is_array($item) && isset($item['id']) && $item['id'] == $id) return $content;
+            }
+            
+            foreach ($content['items'] as $item)
+            {
+                $result = $this->getParentContentById($id, $item);
+                if ($result != null) return $result;
+            }
+            
+            return null;
+        }
+        
         //  Load content definitions from xml
+        function loadContentNode(SimpleXMLElement $xml, array $namespaces, &$id)
+        {
+            $type = $xml->getName();
+            $id++;
+            $rec = array('type' => $type, 'id' => $id, 'name' => '');            
+                        
+            //  iterate through attributes
+            foreach($namespaces as $prefix => $ns)
+            {
+                if ($ns == null) $prefix = null;
+                
+                foreach ($xml->attributes($prefix, true) as $attr)
+                {
+                    $name = trim(strtolower($attr->getName()));
+                    $value = $attr->__toString();
+                    
+                    if ($name == 'name' && $prefix == null) { $rec['name'] = $value; continue; }
+                    $category = $prefix;
+                    if (!isset($category)) $category = 'default';
+                    $rec[$category][$name] = $value;
+                }
+            }
+            
+            //  iterate through child items
+            foreach ($namespaces as $prefix => $ns)
+            {
+                if ($ns == null) $prefix = null;
+                foreach ($xml->children($prefix, true) as $xml_node) 
+                {
+                    $name = trim(strtolower($xml_node->getName()));                    
+                    if (in_array($name, array('id', 'name', 'url', 'href', 'caption', 'text', 'ref')))
+                    {
+                        $value = $xml_node->__toString();
+                        if ($name == 'name' && $prefix == null) { $rec['name'] = $value; continue; }
+                        
+                        $category = $prefix;
+                        if (!isset($category)) $category = 'default';
+                        $rec[$category][$name] = $value;
+                    }
+                    else 
+                    {
+                        $kid = $this->loadContentNode($xml_node, $namespaces, $id);
+                        if ($kid != null) $rec['items'][] = $kid;
+                    }                    
+                }
+            }
+            
+            return $rec;
+        }
+        
         function loadContentDefs()
         {
             $path = trim($this->dataPath);
@@ -99,38 +184,15 @@
             
             if (file_exists($path))
             {
-                $xml = simplexml_load_file($path);
+                $text = file_get_contents($path);
+                $xml = simplexml_load_string($text);
                 if ($xml === false) die("Content definitions file contains format errors.");
                 
-                //  load site descriptor tags
-                $this->site_title = $xml->title;
-                $this->site_description = $xml->description;
-                $this->site_keywords = $xml->keywords;
-                $this->site_author = $xml->author;
-                
-                if (isset($xml->logo)) 
-                {
-                    if (isset($xml->logo->url)) $this->site_logo = $xml->logo->url;
-                    if (isset($xml->logo->style)) $this->site_logoStyle = $xml->logo->style;
-                }
-                
-                if (isset($xml->template)) $this->template_path = $xml->template;
-                
-                for ($i = 0; $i < sizeof($xml->lang); $i++)
-                {
-                    $this->lang_idxs[$i] = $xml->lang[$i]->idx;
-                    $this->lang_hrefs[$i] = $xml->lang[$i]->href;
-                }
-                
-                for ($i = 0; $i < sizeof($xml->item); $i++)
-                {
-                    for ($j = 0; $j < sizeof($xml->item[$i]->menu_item); $j++)
-                    {
-                        $this->menu_items[$j][$i] = $xml->item[$i]->menu_item[$j];
-                    }
-                    
-                    $this->menu_hrefs[$i] = $xml->item[$i]->href;
-                }
+                $namespaces = $xml->getNamespaces(true);
+                if (!isset($namespaces) || empty($namespaces)) $namespaces = array();
+                $namespaces[] = null; //  add a null entry to iterate through default attributes
+                $id = 0;
+                $this->content = $this->loadContentNode($xml, $namespaces, $id);                
             }
             else die ("Cannot find content definitions file.");
         }
@@ -308,7 +370,7 @@
             if ($lang_id > -1) $this->idx_current_lang = $lang_id;
 
             $this->loadContentDefs();
-            $this->setHeader();
+            //$this->setHeader();
             echo $this->process('<q:template />');
             //echo qcmsPath;
         }

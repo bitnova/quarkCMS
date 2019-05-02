@@ -5,6 +5,9 @@ Following is some code written in pascal language:
 [<q:listing>]
 	program HelloWorld;
 
+            return '<h2>'.$cms->menu_items[$cms->idx_current_lang][$cms->idx_current_page].'</h2>';
+
+
 	type TSimpleClass = class(TObject)
 			    private
 			     FAttribute: integer;
