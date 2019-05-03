@@ -20,7 +20,7 @@
 		<item default:caption="Documentation" ro-RO:caption="Documentatie" ref="doc"/>
 	</menu>
 	
-	<content name="examples" default="Examples" ro-RO="Exemple" url="content/test_data/examples.html">
+	<content name="examples" default:caption="Examples" ro-RO:caption="Exemple" url="content/examples/examples.html">
 		
 		<menu name="menu-examples">
 			<item default:caption="Lorem Ipsum" ro-RO:caption="Lorem Ipsum" ref="lorem-ipsum"/>
@@ -31,27 +31,27 @@
 			<item default:caption="Code &amp; Custom Tags" ro-RO:caption="Cod &amp; Tag-uri Custom" ref="code"/>			
 		</menu>
 		
-		<content name="lorem-ipsum" default:caption="Lorem Ipsum" ro-RO:caption="Lorem Ipsum" url="content/test_data/lorem_ipsum.html"/>
-		<content name="scrambled" default="Scrambled Text" ro-RO="Cuvinte Permutate" url="content/test_data/scrambled.html"/>
-		<content name="server-strike" url="content/test_data/strike.html">
-			<default>Servers Strike</default>
-			<ro-RO>Greva Serverelor</ro-RO>
+		<content name="lorem-ipsum" default:caption="Lorem Ipsum" ro-RO:caption="Lorem Ipsum" url="content/examples/lorem_ipsum.html"/>
+		<content name="scrambled" default:caption="Scrambled Text" ro-RO:caption="Cuvinte Permutate" url="content/examples/scrambled.html"/>
+		<content name="server-strike" url="content/examples/strike.html">
+			<default:caption>Servers Strike</default:caption>
+			<ro-RO:caption>Greva Serverelor</ro-RO:caption>
 		</content>
-		<content name="text-formats" default="Text Formats" ro-RO="Formate Text" url="content/test_data/test_text.html"/>
-		<content name="scroll-text" default="Scroll Text" ro-RO="Text Derulant" url="content/test_data/scrolltext.html"/>
-		<content name="code" default="Code &amp; Custom Tags" ro-RO="Cod &amp; Tag-uri Custom" url="content/test_data/code.txt"/>	
+		<content name="text-formats" default:caption="Text Formats" ro-RO:caption="Formate Text" url="content/examples/test_text.html"/>
+		<content name="scroll-text" default:caption="Scroll Text" ro-RO:caption="Text Derulant" url="content/examples/scrolltext.html"/>
+		<content name="code" default:caption="Code &amp; Custom Tags" ro-RO:caption="Cod &amp; Tag-uri Custom" url="content/examples/code.txt"/>	
 	</content>
 	
-	<content name="doc" default="Documentation" ro-RO="Documentatie" url="content/doc/toc.html">
+	<content name="doc" default:caption="Documentation" ro-RO:caption="Documentatie" url="content/doc/toc.html">
 		
 		<menu name="menu-doc">
-			<item default:caption="Principles" ref="doc-general"/>
+			<item default:caption="General Concepts" ref="doc-general"/>
 			<item default:caption="Content Generators" ref="doc-generators"/>
 			<item default:caption="Content Structure" ref="doc-contentdefs"/>
 		</menu>
 		
-		<content name="doc-general" default="General Concepts" ro-RO="Concepte Generale" url="content/doc/general.html"/>
-		<content name="doc-generators" default="Content Generators" ro-RO="Generatoare de Continut" url="content/doc/generators.html"/>
-		<content name="doc-contentdefs" default:caption="Content Structure" default:ro-RO="Structura Continutului" url="content/doc/contentdefs.html"/>
+		<content name="doc-general" default:caption="General Concepts" ro-RO:caption="Concepte Generale" url="content/doc/general.html"/>
+		<content name="doc-generators" default:caption="Content Generators" ro-RO:caption="Generatoare de Continut" url="content/doc/generators.html"/>
+		<content name="doc-contentdefs" default:caption="Content Structure" ro-RO:caption="Structura Continutului" url="content/doc/contentdefs.html"/>
 	</content>
 </content>

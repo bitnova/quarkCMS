@@ -31,7 +31,11 @@
     {
         $filename = $class.'.php';
         if ($filename[0] = 'T') $filename = substr($filename, 1);
-        include $filename;        
+        
+        //  search in plugins folder
+        $filename = 'plugins'.DIRECTORY_SEPARATOR.$filename;
+        
+        if (file_exists($filename)) include $filename;        
     }
     
     spl_autoload_register('quarkCMS_autoloader');

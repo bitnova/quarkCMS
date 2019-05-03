@@ -6,11 +6,13 @@
         {
             $cms = TQuarkCMS::instance();
 
-            $scope = ""; $context = null;
+            $scope = ""; $name = ""; $context = null;
             if (isset($attr) && is_array($attr))
             {
                 if (isset($attr['scope'])) $scope = $attr['scope'];
                 $context = $cms->getParentContentById($cms->idx_current_page);
+                
+                if (isset($attr['name'])) $name = $attr['name'];
             }
             
             $def = $cms->getContentByType('menu', $context);
@@ -49,20 +51,7 @@
                 return $result;
             }
             
-            return '';
-            
-            /*$result = '';
-            for ($i = 0; $i < count($cms->menu_items[$cms->idx_current_lang]); $i++)
-            {
-                $s = '<a class="menu_item';
-                if ($i == $cms->idx_current_page) $s.= ' current';
-                
-                $s.= '" href="index.php?content_id='.$i.'&lang_id='.$cms->idx_current_lang.'">'.$cms->menu_items[$cms->idx_current_lang][$i].'</a>';
-                
-                $result.= $s;
-            }
-            
-            return $result;*/
+            return '';            
         }
     }
     
