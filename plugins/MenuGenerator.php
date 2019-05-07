@@ -2,56 +2,74 @@
 
     class TMenuGenerator extends TBaseGenerator
     {
-        function render($attr = null, $innerText = null)
+        function render(array $attr = null, $innerText = null)
         {
-            $cms = TQuarkCMS::instance();
-
-            $scope = ""; $name = ""; $context = null;
-            if (isset($attr) && is_array($attr))
+            $scope = ''; $name = ''; $autogenerate = 'false';
+            if (isset($attr))
             {
                 if (isset($attr['scope'])) $scope = $attr['scope'];
-                $context = $cms->getParentContentById($cms->idx_current_page);
-                
                 if (isset($attr['name'])) $name = $attr['name'];
             }
             
-            $def = $cms->getContentByType('menu', $context);
-            if (isset($def['items']))
+            $def = null;
+            switch ($scope)
             {
-                $result = '';
-                foreach ($def['items'] as $item)
+                case 'context':
+                    $def = $this->context->parent;
+                    break;
+                default:
+                    $def = $this->content;
+                    break;
+            }
+            
+            if (!isset($def)) return '';
+            $def = $def->findByType('menu'); if (!isset($def)) return '';
+            
+            if (isset($def->autogenerate)) $autogenerate = $def->autogenerate;
+            if (isset($attr['autogenerate'])) $autogenerate = $attr['autogenerate'];
+            $autogenerate = trim(strtolower($autogenerate));            
+
+            $result = '';
+            if ($autogenerate == 'true' && isset($def->parent))
+            {
+                foreach ($def->parent->items as $item)
                 {
-                    if (!isset($item['default']) || !isset($item['default']['caption'])) continue;
-                    $caption = $item['default']['caption'];
+                    if ($item->type != 'content') continue;
                     
-                    $ref = '';
-                    if (isset($item['default']) && isset($item['default']['ref'])) $ref = $item['default']['ref'];
-                    
-                    $href = '';
-                    $current = '';
-                    if ($ref != '')
-                    {
-                        $linked = $cms->getContentByName($ref);
-                        if ($linked != null) 
-                        {
-                            $href = 'index.php?content_id='.$linked['id'];
-                            if ($linked['id'] == $cms->idx_current_page) $current = 'current';
-                        }
-                    }
-                    else
-                    {
-                        //  if reference is not specified then maybe there is a direct hyperlink refeerence
-                        if (isset($item['default']) && isset($item['default']['href'])) $href = $item['default']['href'];
-                    }
+                    $caption = $item->caption; if (!isset($caption)) $caption = '';                    
+                    $href = 'index.php?content_id='.$item->id;
+                    $current = ''; if ($item->id == $this->cms->idx_current_page) $current = 'current';
                     
                     $s = '<a class="menu_item '.$current.'" href="'.$href.'">'.$caption.'</a>';
                     $result.= $s;
                 }
-                
-                return $result;
             }
             
-            return '';            
+            foreach ($def->items as $item)
+            {
+                $caption = $item->caption; if (!isset($caption)) continue;                    
+                $ref = $item->ref;
+                                    
+                $href = '';
+                $current = '';
+                if (isset($ref))
+                {
+                    $linked = $this->content->findByName($ref);
+                    //$linked = $this->cms->getContentByName($ref);
+                    if (isset($linked)) 
+                    {
+                        $href = 'index.php?content_id='.$linked->id;
+                        if ($linked->id == $this->cms->idx_current_page) $current = 'current';
+                    }
+                }
+                else 
+                    if (isset($item->href)) $href = $item->href;
+
+                $s = '<a class="menu_item '.$current.'" href="'.$href.'">'.$caption.'</a>';
+                $result.= $s;
+            }
+            
+            return $result;            
         }
     }
     

@@ -2,12 +2,31 @@
 
     class TBaseGenerator
     {
-        function render($attr = null, $innerText = null)
+        protected $cms = null;
+        protected $content = null;
+        protected $context = null;
+        
+        function __construct(TQuarkCMS $cmsInstance = null)        
+        {
+            if (isset($cmsInstance)) $this->cms = $cmsInstance;
+            else $this->cms = TQuarkCMS::instance();    
+            
+            $this->content = $this->cms->content;
+            $this->context = $this->cms->context;
+        }
+        
+        function q(TContentNode $node, array $attr)
+        {
+            
+        }
+        
+        
+        function render(array $attr = null, $innerText = null)
         {
             return '';    
         }
         
-        function generate($attr = null, $innerText = null)
+        function generate(array $attr = null, $innerText = null)
         {
             ob_start();            
             $buffer = $this->render($attr, $innerText);

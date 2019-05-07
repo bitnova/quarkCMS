@@ -2,18 +2,13 @@
 
     class TLogoGenerator extends TBaseGenerator
     {
-        function render($attr = null, $innerText = null)
+        function render(array $attr = null, $innerText = null)
         {
-            $cms = TQuarkCMS::instance();
-            $def = $cms->getContentByType('logo');
+            $def = $this->content->findByType('logo'); if (!isset($def)) return '';
+            //$def = $this->cms->getContentByType('logo');
             
-            $filename = '';
-            $style = '';
-            if (isset($def['default']))
-            {
-                if (isset($def['default']['url'])) $filename = $def['default']['url'];
-                if (isset($def['default']['style'])) $style = $def['default']['style'];
-            }
+            $filename = $def->url;
+            $style = $def->style;
             
             return '<img style="'.$style.'" src="'.$filename.'" />';
         }

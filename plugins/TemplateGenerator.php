@@ -2,13 +2,13 @@
 
     class TTemplateGenerator extends TBaseGenerator
     {
-        function render($attr = null, $innerText = null)
+        function render(array $attr = null, $innerText = null)
         {
-            $cms = TQuarkCMS::instance();
-            $def = $cms->getContentByType('template');
+            $def = $this->content->findByType('template'); if (!isset($def)) return 'template not defined';
+            //$def = $this->cms->getContentByType('template'); if (!isset($def)) return 'template not defined';
             
             $template_file = '';
-            if (isset($def['default']) && isset($def['default']['url'])) $template_file = $def['default']['url'];
+            if (isset($def->url)) $template_file = $def->url;
             if (!file_exists($template_file)) return 'template not found';
             
             if (is_dir($template_file))

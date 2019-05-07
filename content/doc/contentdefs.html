@@ -1,2 +1,27 @@
 
 The content is structured hierarchially in nodes and subnodes, each node having a type, name, an id and one or more specific attributes that can optionally be part of namespaces. The node types usually refer to the content generator classes, i.e. a menu type content definition will be processed by the menu generator.
+
+<h3>Mandatory content attributes</h3>
+
+The type, name and id of a content node are mandatory, not necessarily in the sense that they have to be specified, but in the sense they always exist (for instance, the id attribute is not specified but it is either retrieved from database or generated automatically at runtime). 
+
+<ul>
+	<li>The <b>type</b> attribute is necessary to correctly classify nodes into lists or to search for the first occurence of a certain content type in a given scope. When using an XML file to define content nodes, the type is inferred from the tag name;</li>
+	<li>The <b>name</b> attribute is used to reference nodes and it needs to be uniquely identified. At the moment there is no enforcing on this uniqueness, but not respecting this rule can lead to undesired behaviors;</li>
+	<li>the <b>id</b> attribute is either retrieved from a field's autoincrement value in case a database is used for storing content definitions, or it can be generated at runtime by quarkCMS when loading the content definitions file. Therefore it is not specified but it always exists and is used to navigate through the content hierarchy.</li>
+</ul>
+
+<h3>Attributes for standard purposes</h3>
+
+There are a number of standard purposes for which attributes need to be specified and which in general are expected by plugins, although there is no eforcement in this regard.
+
+<ul>
+	<li>The <b>caption</b> attribute is used to specify a title or caption, meaning a very short text depicting the referenced content;</li>
+	<li><b>url</b> is used to identify the source for the content, it can be a local or remote file or any other resource identifier that can be interpreted by a content generator</li>
+	<li>The <b>ref</b> attribute is used to reference other target content nodes by name, it is used in menus and links;</li>
+	<li><b>href</b> is used to reference external targets.</li>
+</ul>
+
+<h3>Storing content definitions</h3>
+
+At the moment quarkCMS works strictly with local files, very suited for small sites where communication with a database server can introduce unnecessary lags. All declarations are included in an XML file that reflects the tree like structure.

@@ -76,7 +76,7 @@
             return 'listing_'.$this->count;
         }
         
-        function render($attr = null, $innerText = null)
+        function render(array $attr = null, $innerText = null)
         {
             self::instance()->echoStyle();
             $id = self::$Finstance->generateId();

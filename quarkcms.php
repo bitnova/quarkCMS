@@ -24,7 +24,8 @@
     }
     
     require_once 'BaseGenerator.php';
-    require_once 'ContentDefs.php';
+    require_once 'ContentNode.php';
+    //require_once 'ContentDefs.php';
     
     //  autoloader function
     function quarkCMS_autoloader($class)
@@ -34,6 +35,7 @@
         
         //  search in plugins folder
         $filename = 'plugins'.DIRECTORY_SEPARATOR.$filename;
+        if (qcmsPath != '') $filename = qcmsPath.DIRECTORY_SEPARATOR.$filename;
         
         if (file_exists($filename)) include $filename;        
     }
@@ -59,27 +61,20 @@
         var $dataPath = '';
         
         //  Declare title, description, keywords and author tag vars
-        var $site_title = "";
-        var $site_description = "";
-        var $site_keywords = "";
-        var $site_author = "";
-        
-        //  Declare location of logo image
-        var $site_logo = "";
-        var $site_logoStyle = "";
-        
-        //  Declare template path
-        var $template_path = "";
         
         //  Declare language references
         var $lang_idxs = array();
         var $lang_hrefs = array();
         
         //  Declare menu items
-        var $menu_items = array();
-        var $menu_hrefs = array();
+        //var $menu_items = array();
+        //var $menu_hrefs = array();
         
-        var $content = array();
+        var $content = null;
+        var $context = null;
+        
+        //  Current namespace
+        var $namespace = 'default';
         
         //  Current content page -- set default here
         var $idx_current_page = 0;
@@ -87,98 +82,74 @@
         //  Current language index -- set default here
         var $idx_current_lang = 0;
         
-        function getContentByKey(string $key, $value, $content = null)
-        {
-            if ($content == null) $content = $this->content;
-            if (!isset($content['items'])) return null;
-            
-            foreach ($content['items'] as $item)
-            {
-                if (is_array($item) && isset($item[$key]) && $item[$key] == $value) return $item;
-            }
-                
-            foreach ($content['items'] as $item)
-            {
-                $result = $this->getContentByKey($key, $value, $item);
-                if ($result != null) return $result;
-            }
-            
-            return null;
-        }
-        
-        function getContentByType(string $type, $content = null) { return $this->getContentByKey('type', $type, $content); }
-        function getContentById(int $id, $content = null) { return $this->getContentByKey('id', $id, $content); }
-        function getContentByName(string $name, $content = null) { return $this->getContentByKey('name', $name, $content); }
-        
-        function getParentContentById(int $id, $content = null)
-        {
-            if ($content == null) $content = $this->content;
-            if (!isset($content['items'])) return null;
-            
-            foreach ($content['items'] as $item)
-            {
-                if (is_array($item) && isset($item['id']) && $item['id'] == $id) return $content;
-            }
-            
-            foreach ($content['items'] as $item)
-            {
-                $result = $this->getParentContentById($id, $item);
-                if ($result != null) return $result;
-            }
-            
-            return null;
-        }
-        
         //  Load content definitions from xml
         function loadContentNode(SimpleXMLElement $xml, array $namespaces, &$id)
         {
             $type = $xml->getName();
             $id++;
-            $rec = array('type' => $type, 'id' => $id, 'name' => '');            
-                        
-            //  iterate through attributes
-            foreach($namespaces as $prefix => $ns)
+            $node = new TContentNode($type, '', $id, $this);
+            
+            foreach ($namespaces as $prefix => $ns)
             {
-                if ($ns == null) $prefix = null;
+                $domain = $prefix;
+                if ($ns == null) 
+                {
+                    $prefix = null;
+                    $domain = 'default';
+                }
                 
                 foreach ($xml->attributes($prefix, true) as $attr)
                 {
                     $name = trim(strtolower($attr->getName()));
                     $value = $attr->__toString();
                     
-                    if ($name == 'name' && $prefix == null) { $rec['name'] = $value; continue; }
-                    $category = $prefix;
-                    if (!isset($category)) $category = 'default';
-                    $rec[$category][$name] = $value;
-                }
-            }
-            
-            //  iterate through child items
-            foreach ($namespaces as $prefix => $ns)
-            {
-                if ($ns == null) $prefix = null;
-                foreach ($xml->children($prefix, true) as $xml_node) 
+                    if ($name == 'name' && $prefix == null) $node->name = $value; 
+                    else $node->attributes[$domain][$name] = $value;
+                }                
+                
+                //  iterate through child items
+                foreach ($xml->children($prefix, true) as $xml_node)
                 {
-                    $name = trim(strtolower($xml_node->getName()));                    
-                    if (in_array($name, array('id', 'name', 'url', 'href', 'caption', 'text', 'ref')))
+                    $name = trim(strtolower($xml_node->getName()));
+                    if ($name == 'meta')
+                    {
+                        foreach ($xml_node->attributes($prefix, true) as $attr)
+                        {
+                            $meta_name = trim(strtolower($attr->getName()));
+                            $meta_value = $attr->__toString();
+                            
+                            if (in_array($meta_name, array('owner', 'mode', 'created', 'modified')))
+                            {
+                                $meta_name = 'meta_'.$meta_name;
+                                $node->$meta_name = $meta_value;
+                            }
+                            else $node->meta[$domain][$meta_name] = $meta_value;
+                        }
+                        
+                        continue;
+                    }
+                    
+                    if (in_array($name, array('id', 'name', 'url', 'ref', 'href', 'caption', 'text')))
                     {
                         $value = $xml_node->__toString();
-                        if ($name == 'name' && $prefix == null) { $rec['name'] = $value; continue; }
+                        if ($name == 'name' && $prefix == null) $node->name = $value; 
+                        else $node->attributes[$domain][$name] = $value;
                         
-                        $category = $prefix;
-                        if (!isset($category)) $category = 'default';
-                        $rec[$category][$name] = $value;
+                        continue;
                     }
-                    else 
+                    
+                    $kid = $this->loadContentNode($xml_node, $namespaces, $id);
+                    if ($kid != null)
                     {
-                        $kid = $this->loadContentNode($xml_node, $namespaces, $id);
-                        if ($kid != null) $rec['items'][] = $kid;
-                    }                    
+                        $kid->parent = $node;
+                        $node->items[] = $kid;
+                    }
                 }
             }
             
-            return $rec;
+            return $node;
         }
+        
         
         function loadContentDefs()
         {
@@ -196,7 +167,8 @@
                 if (!isset($namespaces) || empty($namespaces)) $namespaces = array();
                 $namespaces[] = null; //  add a null entry to iterate through default attributes
                 $id = 0;
-                $this->content = $this->loadContentNode($xml, $namespaces, $id);                
+                $this->content = $this->loadContentNode($xml, $namespaces, $id);
+                $this->context = $this->content;
             }
             else die ("Cannot find content definitions file.");
         }
@@ -349,7 +321,7 @@
                 $GeneratorName = 'T'.ucfirst($tag['tag']).'Generator';
                 if (class_exists($GeneratorName, $autoload = true)) 
                 {
-                    $Generator = new $GeneratorName();
+                    $Generator = new $GeneratorName($this);
                     $attr = null; if (isset($tag['attr'])) $attr = $tag['attr'];
                     $innerText = null; if (isset($tag['inner'])) $innerText = $tag['inner'];
                     $result.= $Generator->generate($attr, $innerText);
@@ -374,6 +346,8 @@
             if ($lang_id > -1) $this->idx_current_lang = $lang_id;
 
             $this->loadContentDefs();
+            if ($content_id > 0) $this->context = $this->content->findById($content_id);
+
             //$this->setHeader();
             echo $this->process('<q:template />');
             //echo qcmsPath;

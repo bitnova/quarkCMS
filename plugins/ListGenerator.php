@@ -2,24 +2,19 @@
 
     class TListGenerator extends TBaseGenerator
     {
-        function render($attr = null, $innerText = null)
+        function render(array $attr = null, $innerText = null)
         {
-            $cms = TQuarkCMS::instance();
-            $def = $cms->getContentById($cms->idx_current_page);
-            if ($def == null) $def = $cms->content;
+            $def = $this->context;
+            if (!isset($def)) $def = $this->content; if (!isset($def)) return '';
             
-            if (!isset($def) || !isset($def['items'])) return '';
+            /*$def = $this->cms->getContentById($this->cms->idx_current_page);
+            if ($def == null) $def = $this->cms->content; if (!isset($def)) return '';*/
             
             $html = '<ol>';
-            foreach ($def['items'] as $item)
+            foreach ($def->findAllByType('content') as $item)
             {
-                if (!isset($item['type']) || $item['type'] != 'content') continue;
-                
-                $caption = '';
-                if (isset($item['default']) && isset($item['default']['caption'])) $caption = $item['default']['caption'];
-                    
-                $id = '';
-                if (isset($item['default']) && isset($item['default']['name'])) $id = $item['default']['id'];
+                $caption = $item->caption;
+                $id = $item->id;
                 
                 $href = 'index.php?content_id='.$id;
                 $s = '<li><a class="menu_item" href="'.$href.'">'.$caption.'</a></li>';

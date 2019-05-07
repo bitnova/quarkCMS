@@ -2,7 +2,7 @@
 
     class TLinkGenerator extends TBaseGenerator
     {
-        function render($attr = null, $innerText = null)
+        function render(array $attr = null, $innerText = null)
         {
             $ref = ""; $href = "";
             if (isset($attr) && is_array($attr))
@@ -13,10 +13,8 @@
                         
             if ($ref != "")
             {
-                $cms = TQuarkCMS::instance();
-            
-                $linked = $cms->getContentByName($ref);
-                if ($linked != null) $href = 'index.php?content_id='.$linked['id'];
+                $linked = $this->content->findByName($ref);
+                if (isset($linked)) $href = 'index.php?content_id='.$linked->id;
             }            
             
             $s = '<a href="'.$href.'">';
