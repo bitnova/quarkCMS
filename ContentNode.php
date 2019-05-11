@@ -62,6 +62,35 @@
         function findAllbyId(int $id) { return $this->findAll('id', $id); }
         function findAllByName(string $name) { return $this->findAll('name', $name); }
         
+        function getFullURL()
+        {
+            $url = $this->url;
+            if ($url === null) return null;
+            
+            $k = strpos($url, '/');
+            if ($k !== 0 && $this->parent != null)
+            {
+                $prefix = $this->parent->getFullURL();
+                if (isset($prefix))
+                {
+                    //  check if $prefix refers to a file
+                    $path = pathinfo($prefix);
+                    if (isset($path['extension'])) $prefix = $path['dirname'];
+                    
+                    $url = rtrim($prefix, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR.$url;
+                }
+            }
+
+            //  in case we have a root node, we make it relative to the content folder
+            if ($this->parent == null || $k === 0) 
+            {
+                $root = rtrim($this->cms->dataPath, DIRECTORY_SEPARATOR);
+                $url = ($k === 0 ? $root.$url : $root.DIRECTORY_SEPARATOR.$url);
+            }
+            
+            return $url;
+        }
+        
         public function __isset($key)
         {
             $ns = 'default';

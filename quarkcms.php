@@ -210,6 +210,7 @@
                 $key = '';
                 while (in_array($char, $spaces) && $i < $len) { $i++; $char = $s[$i]; } // skip any space after the element and before attributes
                 while (!in_array($char, $spaces) && $char != '=' && $i < $len) { $key.= $char; $i++; $char = $s[$i]; }
+                if ($i == $len) $key.= $char;
                 if ($char != '=')
                     while (in_array($char, $spaces) && $i < $len) { $i++; $char = $s[$i]; } // skip any space after the element and before attributes
                     
@@ -236,14 +237,13 @@
             return $result;
         }
         
-        function process(string $text)
+        function parse(string $text, string $tagstart = '<q:', string $tagendopened = '>', string $tagendclosed = '/>', string $tagstartclose = '</q:')
         {
             //  parse the text for quark tags and collect them into an array alongside
             //  their start and end position
-            $result = '';
             $tags = array();
             
-            $idx_start = strpos($text, '<q:'); //  search for the first occurence of a quark tag
+            $idx_start = strpos($text, $tagstart/*'<q:'*/); //  search for the first occurence of a quark tag
             while ($idx_start !== false)
             {
                 //  assume some properties of the found tag
@@ -251,13 +251,13 @@
                 $malformed = false;
                 
                 //  locate tag and determine if it is malformed, selfclosed or not
-                $idxs = $idx_start + 3; //  avoids a few adds in the next lines
-                $idx_next = strpos($text, '<', $idxs);  //  take the pos of the next tag opening to check for format errors
-                $idx_stop = strpos($text, '/>', $idxs); //  locate the end of the tag as if it is an autoclosing one
-                if ($idx_stop === false || $idx_next < $idx_stop)
+                $idxs = $idx_start + strlen($tagstart)/*3*/; //  avoids a few adds in the next lines
+                $idx_next = strpos($text, $tagstart[0]/*'<'*/, $idxs);  //  take the pos of the next tag opening to check for format errors
+                $idx_stop = strpos($text, $tagendclosed/*'/>'*/, $idxs); //  locate the end of the tag as if it is an autoclosing one
+                if ($idx_stop === false || ($idx_next !== false && $idx_next < $idx_stop))
                 {
                     //  self closing marker not found, it might be an error or there could be a separate closing tag
-                    $idx_stop = strpos($text, '>', $idxs);
+                    $idx_stop = strpos($text, $tagendopened/*'>'*/, $idxs);
                     
                     if ($idx_stop === false || $idx_next < $idx_stop)
                     {
@@ -273,9 +273,9 @@
                 else $idx_stop++;
                 
                 //  extract tag info
-                $len = $idx_stop - $idx_start - 2; // it's actually + 1 - 3
+                $len = $idx_stop - $idx_start + 1 - strlen($tagstart); // it's actually + 1 - 3
                 $str_tag = substr($text, $idxs, $len); //  skip the <q: part and avoid a second substr
-                $str_tag = trim($str_tag, " \t/>"); //  cut any space, tab, slash or greater signs
+                $str_tag = trim($str_tag, " \t/".$tagendopened/*">"*/); //  cut any space, tab, slash or greater signs
                 
                 $parts = $this->fasterTag($str_tag);
                 if (sizeof($parts) >= 1)
@@ -290,7 +290,7 @@
                     $str_inner = '';
                     if (!$selfclosed)
                     {
-                        $search = '</q:'.$str_tag.'>';
+                        $search = $tagstartclose/*'</q:'*/.$str_tag.$tagendopened/*'>'*/;
                         $idx = strpos($text, $search, $idx_stop);
                         if ($idx !== false)
                         {
@@ -307,8 +307,66 @@
                 }
                 
                 //  get the position of the next quark tag and continue searching
-                $idx_start = strpos($text, '<q:', $idx_stop);
+                $idx_start = strpos($text, $tagstart/*'<q:'*/, $idx_stop);
             }
+            
+            return $tags;
+        }
+        
+        function filltemplate(string $text, array $vars)
+        {
+            $result = '';
+            $tags = $this->parse($text, '{', '}', '/}', '{/');
+            
+            $offset = 0;
+            foreach ($tags as $tag)
+            {
+                $result.= substr($text, $offset, $tag['start'] - $offset);
+                
+                switch ($tag['tag'])
+                {
+                    case 'foreach':
+                        $innerText = ''; 
+                        if (isset($tag['inner'])) $innerText = $tag['inner'];
+                        
+                        $attr = null; if (isset($tag['attr'])) $attr = $tag['attr'];
+                        if (is_array($attr) && count($attr) > 0)
+                        {
+                            $varName = array_keys($attr)[0];
+                            if ($varName[0] == '$')
+                            {
+                                $varName = substr($varName, 1);
+                                if (isset($vars[$varName]) && is_array($vars[$varName]))
+                                {
+                                    foreach ($vars[$varName] as $var)
+                                    {
+                                        $result.= $this->filltemplate($innerText, $var);                                    
+                                    }
+                                }
+                            }
+                        }
+                        break;
+                    default:
+                        $varName = $tag['tag'];
+                        if ($varName[0] == '$')
+                        {
+                            $varName = substr($varName, 1);
+                            if (isset($vars[$varName])) $result.= $vars[$varName];
+                        }
+                        break;
+                }
+                
+                $offset = $tag['stop'] + 1;
+            }
+            $result.= substr($text, $offset); //  copy the rest of the output buffer
+            
+            return $result;
+        }
+        
+        function process(string $text)
+        {
+            $result = '';
+            $tags = $this->parse($text, '<q:', '>', '/>', '</q:');
             
             //  rebuild the output by processing each content placeholder in the array
             //  and copying the in between bits directly from the input text
