@@ -27,32 +27,49 @@
 		
 		<content name="scrambled" default:caption="Scrambled Text" ro-RO:caption="Cuvinte Permutate" url="scrambled.html">
 			<meta created="2019-01-01" modified="2019-01-08"/>
+			<meta default:title="" default:keywords="" default:description="Something fishy lurks around"/>
 		</content>
 		
 		<content name="server-strike" default:caption="Servers Strike" ro-RO:caption="Greva Serverelor" url="strike.html">
 			<meta created="2019-01-01" modified="2019-01-09"/>
+			<meta default:title="" default:keywords="" default:description="Something fishy lurks around"/>
 		</content>
 		
 		<content name="text-formats" default:caption="Text Formats" ro-RO:caption="Formate Text" url="test_text.html">
 			<meta created="2019-01-01" modified="2019-01-10"/>
+			<meta default:title="" default:keywords="" default:description="Something fishy lurks around"/>
 		</content>
 		
 		<content name="scroll-text" default:caption="Scroll Text" ro-RO:caption="Text Derulant" url="scrolltext.html">
 			<meta created="2019-01-01" modified="2019-01-11"/>
+			<meta default:title="" default:keywords="" default:description="Something fishy lurks around"/>
 		</content>
 		
 		<content name="code" default:caption="Code &amp; Custom Tags" ro-RO:caption="Cod &amp; Tag-uri Custom" url="code.txt">	
 			<meta created="2019-01-01" modified="2019-01-12"/>
+			<meta default:title="" default:keywords="" default:description="Something fishy lurks around"/>
 		</content>		
 	</content>
 	
 	<content name="doc" default:caption="Documentation" ro-RO:caption="Documentatie" url="doc/toc.html">
+		<meta created="2019-05-02" modified="2019-05-06" />
 		
 		<menu name="menu-doc" autogenerate="true" />
 		
-		<content name="doc-general" default:caption="General Concepts" ro-RO:caption="Concepte Generale" url="general.html"/>
-		<content name="doc-generators" default:caption="Content Generators" ro-RO:caption="Generatoare de Continut" url="generators.html"/>
-		<content name="doc-contentdefs" default:caption="Content Structure" ro-RO:caption="Structura Continutului" url="contentdefs.html"/>
+		<content name="doc-general" default:caption="General Concepts" ro-RO:caption="Concepte Generale" url="general.html">
+			<meta default:description="Principles and guide rules in design and implementation of quarkCMS" />
+			<meta created="2019-05-02" modified="2019-05-02" />
+		</content>
+		
+		<content name="doc-generators" default:caption="Content Generators" ro-RO:caption="Generatoare de Continut" url="generators.html">
+			<meta description="How custom html tags are linked with specialized classes in producing the content output" />
+			<meta created="2019-05-02" modified="2019-05-02" />
+		</content>
+				
+		<content name="doc-contentdefs" default:caption="Content Structure" ro-RO:caption="Structura Continutului" url="contentdefs.html">
+			<meta description="Using XML to declare content hierarchy and properties" />
+			<meta created="2019-05-02" modified="2019-05-04" />
+		</content>
 	</content>
 	
 	<content name="about" default:caption="About" ro-RO:caption="Despre" url="content/about.html"/>

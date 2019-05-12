@@ -111,7 +111,8 @@
                 foreach ($xml->children($prefix, true) as $xml_node)
                 {
                     $name = trim(strtolower($xml_node->getName()));
-                    if ($name == 'meta')
+                    
+                    /*if ($name == 'meta')
                     {
                         foreach ($xml_node->attributes($prefix, true) as $attr)
                         {
@@ -127,7 +128,7 @@
                         }
                         
                         continue;
-                    }
+                    }*/
                     
                     if (in_array($name, array('id', 'name', 'url', 'ref', 'href', 'caption', 'text')))
                     {
@@ -138,11 +139,37 @@
                         continue;
                     }
                     
-                    $kid = $this->loadContentNode($xml_node, $namespaces, $id);
-                    if ($kid != null)
+                    if ($name == 'meta')
                     {
-                        $kid->parent = $node;
-                        $node->items[] = $kid;
+                        //  here we do a dirty trick in order to avoid writing code to go through all namespaces for meta fields
+                        $k = $id; //  so we don't increment the id for this one
+                        $meta_node = $this->loadContentNode($xml_node, $namespaces, $k);
+                        
+                        foreach ($meta_node->attributes as $domain => $values)
+                        {
+                            foreach ($values as $key => $value)
+                            {
+                                if ($domain == 'default' && in_array($key, array('owner', 'mode', 'created', 'modified')))
+                                {
+                                    $meta_name = 'meta_'.$key;
+                                    $node->$meta_name = $value;
+                                }
+                                else
+                                {
+                                    if (!isset($node->meta[$domain])) $node->meta[$domain] = array();
+                                    $node->meta[$domain][$key] = $value;
+                                }
+                            }
+                        }
+                    }
+                    else 
+                    {
+                        $kid = $this->loadContentNode($xml_node, $namespaces, $id);
+                        if ($kid != null)
+                        {
+                            $kid->parent = $node;
+                            $node->items[] = $kid;
+                        }
                     }
                 }
             }

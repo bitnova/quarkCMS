@@ -48,12 +48,16 @@
         function findById(int $id) { return $this->find('id', $id); }
         function findByName(string $name) { return $this->find('name', $name); }
         
-        function findAll(string $key, $value, string $orderby = '')
+        function findAll(string $key, $value, string $orderby = '', bool $recurrent = false)
         {
             $result = array();
             
             foreach ($this->items as $item)
-                if ($item instanceof TContentNode && $item->$key == $value) $result[] = $item; 
+                if ($item instanceof TContentNode && $item->$key == $value) $result[] = $item;
+            
+            if ($recurrent)
+                foreach ($this->items as $item)
+                    $result = array_merge($result, $item->findAll($key, $value, '', true));
             
             if ($orderby != '')
             {
@@ -78,9 +82,9 @@
             return $result;            
         }
         
-        function findAllByType(string $type, string $orderby = '') { return $this->findAll('type', $type, $orderby); }
-        function findAllbyId(int $id, string $orderby = '') { return $this->findAll('id', $id, $orderby); }
-        function findAllByName(string $name, string $orderby = '') { return $this->findAll('name', $name, $orderby); }
+        function findAllByType(string $type, string $orderby = '', bool $recurrent = false) { return $this->findAll('type', $type, $orderby, $recurrent); }
+        function findAllbyId(int $id, string $orderby = '', bool $recurrent = false) { return $this->findAll('id', $id, $orderby, $recurrent); }
+        function findAllByName(string $name, string $orderby = '', bool $recurrent = false) { return $this->findAll('name', $name, $orderby, $recurrent); }
         
         function getFullURL()
         {

@@ -12,8 +12,11 @@
         
         function render(array $attr = null, $innerText = null)
         {
-            $def = $this->context;
-            if (!isset($def)) $def = $this->content; if (!isset($def)) return '';
+            $def = null;
+            if (isset($attr['name'])) $def = $this->content->findByName($attr['name']);
+            if (!isset($def)) $def = $this->context;
+            if (!isset($def)) $def = $this->content; 
+            if (!isset($def)) return '';
             
             $tpl = $this::$defaultViewTemplate; //  assume there is no custom template defined
             if (isset($innerText)) $tpl = $innerText; //  inner text is given, then this should be the new template
@@ -37,17 +40,26 @@
             
             $values = array();
             $orderby = ''; if (isset($attr) && isset($attr['orderby'])) $orderby = trim(strtolower($attr['orderby']));
-            foreach ($def->findAllByType('content', $orderby) as $item)
+            
+            $recurrent = false; if (isset($attr['count'])) $recurrent = true;
+            $items = $def->findAllByType('content', $orderby, $recurrent);
+            
+            $count = count($items); if (isset($attr['count'])) $count = min($count, $attr['count']);
+            $i = 0;
+            foreach ($items as $item)
             {
                 $id = $item->id;
                 $caption = $item->caption;
                 $href = 'index.php?content_id='.$id;
                 $meta_created = $item->meta_created;
                 $meta_modified = $item->meta_modified;
-                $meta_description = ''; if (isset($item->meta['description'])) $meta_description = $item->meta['description'];
+                $meta_description = ''; if (isset($item->meta['default']['description'])) $meta_description = $item->meta['default']['description'];
                 
                 $row = array('id' => $id, 'caption' => $caption, 'href' => $href, 'meta.description'=> $meta_description, 'meta.created' => $meta_created, 'meta.modified' => $meta_modified);
                 $values[] = $row;
+                
+                $i++;
+                if ($i == $count) break;
             }
             
             return $this->cms->filltemplate($tpl, array('values' => $values));            
