@@ -48,19 +48,39 @@
         function findById(int $id) { return $this->find('id', $id); }
         function findByName(string $name) { return $this->find('name', $name); }
         
-        function findAll(string $key, $value)
+        function findAll(string $key, $value, string $orderby = '')
         {
             $result = array();
             
             foreach ($this->items as $item)
                 if ($item instanceof TContentNode && $item->$key == $value) $result[] = $item; 
             
-            return $result;
+            if ($orderby != '')
+            {
+                $field = null; $direction = null;
+                $parts = explode(' ', $orderby);
+                if (count($parts) > 0) { $field = $parts[0]; if (strpos($field, 'meta.') === 0) $field = str_replace('meta.', 'meta_', $field); }
+                if (count($parts) > 1) $direction = $parts[1];
+                if ($direction == null) $direction = 'asc';
+                if (isset($field))
+                {
+                    uasort($result, 
+                        function($a, $b) use ($field, $direction)
+                        {
+                            if ($a->$field == $b->$field) return 0;
+                            if ($direction == 'desc') return ($a->$field < $b->$field) ? 1 : -1;
+                            else return ($a->$field < $b->$field) ? -1 : 1;
+                        }
+                    );
+                }
+            }
+            
+            return $result;            
         }
         
-        function findAllByType(string $type) { return $this->findAll('type', $type); }
-        function findAllbyId(int $id) { return $this->findAll('id', $id); }
-        function findAllByName(string $name) { return $this->findAll('name', $name); }
+        function findAllByType(string $type, string $orderby = '') { return $this->findAll('type', $type, $orderby); }
+        function findAllbyId(int $id, string $orderby = '') { return $this->findAll('id', $id, $orderby); }
+        function findAllByName(string $name, string $orderby = '') { return $this->findAll('name', $name, $orderby); }
         
         function getFullURL()
         {

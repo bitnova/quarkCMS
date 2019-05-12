@@ -21,14 +21,29 @@
 		<menu name="menu-examples" autogenerate="true" />
 		
 		<content name="lorem-ipsum" default:caption="Lorem Ipsum" ro-RO:caption="Lorem Ipsum" url="lorem_ipsum.html">
-			<meta default:title="" default:keywords="" default:description="Something fishy lurks around" mode="777" owner="rogue:group" created="20190101" modified="20190110" />
+			<meta mode="777" owner="rogue:group" created="2019-01-01" modified="2019-01-07" />
+			<meta default:title="" default:keywords="" default:description="Something fishy lurks around"/>
 		</content>
 		
-		<content name="scrambled" default:caption="Scrambled Text" ro-RO:caption="Cuvinte Permutate" url="scrambled.html"/>
-		<content name="server-strike" default:caption="Servers Strike" ro-RO:caption="Greva Serverelor" url="strike.html"/>
-		<content name="text-formats" default:caption="Text Formats" ro-RO:caption="Formate Text" url="test_text.html"/>
-		<content name="scroll-text" default:caption="Scroll Text" ro-RO:caption="Text Derulant" url="scrolltext.html"/>
-		<content name="code" default:caption="Code &amp; Custom Tags" ro-RO:caption="Cod &amp; Tag-uri Custom" url="code.txt"/>	
+		<content name="scrambled" default:caption="Scrambled Text" ro-RO:caption="Cuvinte Permutate" url="scrambled.html">
+			<meta created="2019-01-01" modified="2019-01-08"/>
+		</content>
+		
+		<content name="server-strike" default:caption="Servers Strike" ro-RO:caption="Greva Serverelor" url="strike.html">
+			<meta created="2019-01-01" modified="2019-01-09"/>
+		</content>
+		
+		<content name="text-formats" default:caption="Text Formats" ro-RO:caption="Formate Text" url="test_text.html">
+			<meta created="2019-01-01" modified="2019-01-10"/>
+		</content>
+		
+		<content name="scroll-text" default:caption="Scroll Text" ro-RO:caption="Text Derulant" url="scrolltext.html">
+			<meta created="2019-01-01" modified="2019-01-11"/>
+		</content>
+		
+		<content name="code" default:caption="Code &amp; Custom Tags" ro-RO:caption="Cod &amp; Tag-uri Custom" url="code.txt">	
+			<meta created="2019-01-01" modified="2019-01-12"/>
+		</content>		
 	</content>
 	
 	<content name="doc" default:caption="Documentation" ro-RO:caption="Documentatie" url="doc/toc.html">

@@ -36,16 +36,17 @@
             
             
             $values = array();
-            foreach ($def->findAllByType('content') as $item)
+            $orderby = ''; if (isset($attr) && isset($attr['orderby'])) $orderby = trim(strtolower($attr['orderby']));
+            foreach ($def->findAllByType('content', $orderby) as $item)
             {
                 $id = $item->id;
                 $caption = $item->caption;
                 $href = 'index.php?content_id='.$id;
-                $created = $item->meta_created;
-                $modified = $item->meta_modified;
-                $description = ''; if (isset($item->meta['description'])) $description = $item->meta['description'];
+                $meta_created = $item->meta_created;
+                $meta_modified = $item->meta_modified;
+                $meta_description = ''; if (isset($item->meta['description'])) $meta_description = $item->meta['description'];
                 
-                $row = array('id' => $id, 'caption' => $caption, 'href' => $href, 'description'=> $description, 'created' => $created, 'modified' => $modified);
+                $row = array('id' => $id, 'caption' => $caption, 'href' => $href, 'meta.description'=> $meta_description, 'meta.created' => $meta_created, 'meta.modified' => $meta_modified);
                 $values[] = $row;
             }
             
