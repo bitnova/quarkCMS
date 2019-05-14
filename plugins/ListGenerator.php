@@ -49,13 +49,14 @@
             foreach ($items as $item)
             {
                 $id = $item->id;
+                $name = $item->name;
                 $caption = $item->caption;
                 $href = 'index.php?content_id='.$id;
                 $meta_created = $item->meta_created;
                 $meta_modified = $item->meta_modified;
                 $meta_description = ''; if (isset($item->meta['default']['description'])) $meta_description = $item->meta['default']['description'];
                 
-                $row = array('id' => $id, 'caption' => $caption, 'href' => $href, 'meta.description'=> $meta_description, 'meta.created' => $meta_created, 'meta.modified' => $meta_modified);
+                $row = array('id' => $id, 'name' => $name, 'caption' => $caption, 'href' => $href, 'meta.description'=> $meta_description, 'meta.created' => $meta_created, 'meta.modified' => $meta_modified);
                 $values[] = $row;
                 
                 $i++;
