@@ -17,7 +17,13 @@
                 if (isset($linked)) $href = 'index.php?content_id='.$linked->id;
             }            
             
-            $s = '<a href="'.$href.'">';
+            $style = '';
+            if (isset($attr['style'])) $style = ' style="'.$attr['style'].'" ';
+            
+            $target = '';
+            if (isset($attr['target'])) $target = ' target="'.$attr['target'].'" ';
+            
+            $s = '<a href="'.$href.'"'.$target.$style.'>';
             if (isset($innerText)) $s.= $innerText;
             $s.= '</a>';
             return $s;
