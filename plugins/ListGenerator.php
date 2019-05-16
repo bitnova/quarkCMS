@@ -58,7 +58,7 @@
             $i = 0;
             foreach ($items as $item)
             {
-                $row_values = array('id' => $item->id, 'name' => $item->name, 'caption' => $item->caption, 'href' => 'index.php?content_id='.$id, 'meta.created' => $item->meta_created, 'meta.modified' => $item->meta_modified);
+                $row_values = array('id' => $item->id, 'name' => $item->name, 'caption' => $item->caption, 'href' => 'index.php?content_id='.$item->id, 'meta.created' => $item->meta_created, 'meta.modified' => $item->meta_modified);
 
                 $meta_description = ''; if (isset($item->meta['default']['description'])) $meta_description = $item->meta['default']['description'];
                 $row_values['meta.description'] = $meta_description;

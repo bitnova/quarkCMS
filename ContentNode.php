@@ -83,9 +83,9 @@
             return $result;            
         }
         
-        function findAllByType(string $type, string $orderby = '', bool $recurrent = false) { return $this->findAll('type', $type, $orderby, $recurrent); }
-        function findAllbyId(int $id, string $orderby = '', bool $recurrent = false) { return $this->findAll('id', $id, $orderby, $recurrent); }
-        function findAllByName(string $name, string $orderby = '', bool $recurrent = false) { return $this->findAll('name', $name, $orderby, $recurrent); }
+        function findAllByType(string $type, string $orderby = '', bool $recurrent = false, string $exclude = '') { return $this->findAll('type', $type, $orderby, $recurrent, $exclude); }
+        function findAllbyId(int $id, string $orderby = '', bool $recurrent = false, string $exclude = '') { return $this->findAll('id', $id, $orderby, $recurrent, $exclude); }
+        function findAllByName(string $name, string $orderby = '', bool $recurrent = false, string $exclude = '') { return $this->findAll('name', $name, $orderby, $recurrent, $exclude); }
         
         function Where($f, bool $recurrent = false)
         {
