@@ -5,9 +5,9 @@
         function render(array $attr = null, $innerText = null)
         {
             $def = null;
-            if (isset($attr['name'])) 
+            if (isset($attr['ref'])) 
             {
-                $def = $this->content->findByName($attr['name']);
+                $def = $this->content->findByName($attr['ref']);
                 if (!isset($def)) return 'Content for content_name: '.$attr['name'].' not defined';
             }
             else
