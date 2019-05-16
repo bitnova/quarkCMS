@@ -80,7 +80,7 @@
         {
             self::instance()->echoStyle();
             $id = self::$Finstance->generateId();
-            echo '<pre class="listing" style="max-height: 40em; overflow: auto;"><code id="'.$id.'">'.$innerText.'</code></pre>'."\n";
+            echo '<pre class="listing" style="max-height: 40em; overflow: scroll;"><code id="'.$id.'">'.$innerText.'</code></pre>'."\n";
             echo '<script>highlight("'.$id.'");</script>';            
         }
     }

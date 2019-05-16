@@ -1,5 +1,5 @@
 <head>
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="viewport" content="width=device-width, initial-scale=0.9">
 	<q:meta />
 	<style>
 		a
@@ -32,6 +32,90 @@
 			display: table-cell;
 			padding: 16px;
 			vertical-align: top;
+		}
+		
+		div.title
+		{
+			position: relative; 
+			top: -64px; 
+			color: #0f0
+		}
+		
+		div.content
+		{
+			position: relative; 
+			top: -64px;
+		}
+		
+		a.menu-icon
+		{
+			display: inline-block;
+			position: relative;
+			width: 0px;
+			height: 0px;
+			border: 1px solid #040;
+			padding: 4px;
+			visibility: hidden;	
+		}
+		
+		a.showsidebar
+		{
+			top: -56px;
+		}
+		
+		a.menu-icon div
+		{
+			width: 24px;
+			height: 2px;
+			background-color: silver;
+			margin-top: 4px;
+			margin-bottom: 5px;		
+		}		
+		
+		@media screen and (max-width: 720px)
+		{
+			a.menu-icon
+			{
+				width: 24px;
+				height: 24px;
+				visibility: visible;				
+			}
+			
+			a.hidesidebar
+			{
+				visibility: hidden;
+			}
+			
+			div.title
+			{
+				display: inline-block;
+			}
+			
+			div.row
+			{
+				display: block;
+				width: 100%;
+			}
+			
+			div.cell
+			{
+				display: block;
+				margin: 0px auto;
+			}
+					
+			div.floating
+			{
+				width: 100%;
+				visibility: visible;
+				margin-bottom: 64px;
+			}
+			
+			div.sidebar
+			{
+				max-width: 40px;
+				height: 0px;
+				visibility: hidden;
+			}
 		}
 		
 		div.module a.menu_item
@@ -85,16 +169,21 @@
 	<div style="display: table; width: 100%;">
 		<div class="row">
 			<div class="logo cell" style="max-width: 256px;"><a style="text-decoration: none;" href="index.php"><q:logo /></a></div>
-			<div class="cell" style="width: 100%; color: #0f0;"><div class="menu"><q:menu /></div>
-			</div>
+			<div class="cell" style="width: 100%; color: #0f0;"><div class="menu"><q:menu /></div></div>
 		</div>
 		<div class="row">
-			<div class="cell">
+			<div id="sidebar" class="cell sidebar">
+				<a id="hidesidebar" href="javascript:void(0)" class="menu-icon hidesidebar" onclick="hideSidebar()">
+					<div></div><div></div><div></div>
+				</a>
 				<div class="module" style="background-color: #040; width: 100%; padding: 8px; min-height: 160px; border: 1px solid #aaa;"><q:menu scope="context"/></div>
 			</div>
-			<div class="cell">
-				<div class="title" style="position: relative; top: -64px; color: #0f0"><q:caption /></div>
-				<div class="content" style="position: relative; top: -64px; "><q:content /></div>
+			<div class="cell">			
+				<a href="javascript:void(0)" class="menu-icon showsidebar" onclick="showSidebar()">
+					<div></div><div></div><div></div>
+				</a>
+				<div class="title" ><q:caption /></div> 
+				<div class="content" ><q:content /></div> 
 			</div>
 		</div>
 	</div>
@@ -135,6 +224,18 @@
 		{
 			document.body.scrollTop = 0; // For Safari
 			document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+		}
+		
+		function showSidebar()
+		{
+			document.getElementById('sidebar').className = 'cell floating';
+			document.getElementById('hidesidebar').style.visibility = 'visible';
+		}
+		
+		function hideSidebar()
+		{
+			document.getElementById('sidebar').className = 'cell sidebar';
+			document.getElementById('hidesidebar').style.visibility = 'hidden';
 		}
 	</script>
 </body>
