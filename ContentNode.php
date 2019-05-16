@@ -48,16 +48,16 @@
         function findById(int $id) { return $this->find('id', $id); }
         function findByName(string $name) { return $this->find('name', $name); }
         
-        function findAll(string $key, $value, string $orderby = '', bool $recurrent = false, string $exclude = '')
+        function findAll(string $key, $value, string $orderby = '', bool $recurrent = false, array $exclude = array())
         {
             $result = array();
             
             foreach ($this->items as $item)
-                if ($item instanceof TContentNode && $item->$key == $value && $item->name != $exclude) $result[] = $item;
+                if ($item instanceof TContentNode && $item->$key == $value && !in_array($item->name, $exclude)) $result[] = $item;
             
             if ($recurrent)
                 foreach ($this->items as $item)
-                    if ($item->name != $exclude)
+                    if (!in_array($item->name, $exclude))
                         $result = array_merge($result, $item->findAll($key, $value, '', true, $exclude));
             
             if ($orderby != '')
@@ -83,9 +83,9 @@
             return $result;            
         }
         
-        function findAllByType(string $type, string $orderby = '', bool $recurrent = false, string $exclude = '') { return $this->findAll('type', $type, $orderby, $recurrent, $exclude); }
-        function findAllbyId(int $id, string $orderby = '', bool $recurrent = false, string $exclude = '') { return $this->findAll('id', $id, $orderby, $recurrent, $exclude); }
-        function findAllByName(string $name, string $orderby = '', bool $recurrent = false, string $exclude = '') { return $this->findAll('name', $name, $orderby, $recurrent, $exclude); }
+        function findAllByType(string $type, string $orderby = '', bool $recurrent = false, array $exclude = array()) { return $this->findAll('type', $type, $orderby, $recurrent, $exclude); }
+        function findAllbyId(int $id, string $orderby = '', bool $recurrent = false, array $exclude = array()) { return $this->findAll('id', $id, $orderby, $recurrent, $exclude); }
+        function findAllByName(string $name, string $orderby = '', bool $recurrent = false, array $exclude = array()) { return $this->findAll('name', $name, $orderby, $recurrent, $exclude); }
         
         function Where($f, bool $recurrent = false)
         {

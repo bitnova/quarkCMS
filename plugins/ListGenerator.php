@@ -47,10 +47,11 @@
             $recurrent = false; if (isset($attr['count'])) $recurrent = true;
             
             //  see if we need to exclude some branches
-            $exclude = ''; if (isset($attr['exclude'])) $exclude = trim(strtolower($attr['exclude']));
+            $str_exclude = ''; if (isset($attr['exclude'])) $str_exclude = trim(strtolower($attr['exclude']));
+            $arr_exclude = explode(',', $str_exclude); for ($i = 0; $i < count($arr_exclude); $i++) $arr_exclude[$i] = trim($arr_exclude[$i]);
             
             //  search for items
-            $items = $def->findAllByType('content', $orderby, $recurrent, $exclude);
+            $items = $def->findAllByType('content', $orderby, $recurrent, $arr_exclude);
             
             //  prepare the values array which will be passed as atgument to the view template
             $values = array();
