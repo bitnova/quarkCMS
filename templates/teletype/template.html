@@ -102,6 +102,14 @@
 				display: block;
 				margin: 0px auto;
 			}
+			
+			div.content
+			{
+				/*display: flex;
+				flex: 1;
+				min-width: 0;
+				width: 100%;*/
+			}
 					
 			div.floating
 			{
@@ -179,7 +187,7 @@
 				<div class="module" style="background-color: #040; width: 100%; padding: 8px; min-height: 160px; border: 1px solid #aaa;"><q:menu scope="context"/></div>
 			</div>
 			<div class="cell">			
-				<a href="javascript:void(0)" class="menu-icon showsidebar" onclick="showSidebar()">
+				<a id="showsidebar" href="javascript:void(0)" class="menu-icon showsidebar" onclick="showSidebar()">
 					<div></div><div></div><div></div>
 				</a>
 				<div class="title" ><q:caption /></div> 
@@ -229,13 +237,27 @@
 		function showSidebar()
 		{
 			document.getElementById('sidebar').className = 'cell floating';
+			document.getElementById('showsidebar').style.display = 'none';
 			document.getElementById('hidesidebar').style.visibility = 'visible';
 		}
 		
 		function hideSidebar()
 		{
 			document.getElementById('sidebar').className = 'cell sidebar';
+			document.getElementById('showsidebar').style.display = 'block';
 			document.getElementById('hidesidebar').style.visibility = 'hidden';
+		}
+
+		window.addEventListener('resize', resizeCodeTags);
+		resizeCodeTags();
+		function resizeCodeTags()
+		{
+			var tags = document.getElementsByTagName('pre');
+			for (var i = 0; i < tags.length; i++)
+			{
+				if (tags[i].className == 'listing')
+					tags[i].style.maxWidth = window.outerWidth + 'px';
+			}
 		}
 	</script>
 </body>

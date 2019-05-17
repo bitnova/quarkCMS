@@ -45,7 +45,7 @@
                     $result = str_replace('[<', '::start::', $result);
                     $result = str_replace('>]', '::stop::', $result);
                     $result = htmlspecialchars($result, ENT_NOQUOTES);
-                    $result = '<pre style="white-space: pre-wrap;">'.$result.'</pre>';
+                    $result = '<pre style="white-space: pre-wrap; min-width: 0;">'.$result.'</pre>';
                     $result = str_replace('::start::', '<', $result);
                     $result = str_replace('::stop::', '>', $result);
                     return $result;

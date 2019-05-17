@@ -17,7 +17,7 @@
 		<td width="50%">Latest documentation article</td>
 	</tr>
 	<tr>
-		<td>
+		<td valign="top">
 			<q:list ref="examples" count="1" orderby="meta.modified">
 				{foreach $values}
 				<a href="{$href/}">
@@ -33,7 +33,7 @@
 			</q:list>
 		</td>
 		<td width="1%"/>
-		<td>
+		<td valign="top">
 			<q:list ref="doc" count="1" orderby="meta.modified" exclude="examples">
 				{foreach $values}
 				<a href="{$href/}">
