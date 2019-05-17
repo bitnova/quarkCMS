@@ -1,0 +1,15 @@
+<div>
+	{foreach $values}
+	<a href="{$href/}">
+		<div style="background-color: #020; border: 1px solid #040;">
+			<div style="display:block; background-color: #040; height: 1.5em; border: 1px solid #080;">
+				<div style="display: inline; background-color: #040; float: left;">{$caption/}</div>
+				<div style="display: inline; background-color: #040; float: right;">{$meta.modified/}</div>
+			</div>
+			<p>{$meta.description/}</p>
+		</div>
+	</a>
+	<br/>
+	{/foreach}
+</div>
+

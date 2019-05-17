@@ -27,14 +27,14 @@
             {
                 //  there is a template file specified as attribute
                 $viewTemplate = $attr['template'];
-                $filename = get_class($this).'-'.$viewTemplate.'html';
+                $filename = get_class($this).'-'.$viewTemplate.'.html';
                 if ($filename[0] == 'T') $filename = substr($filename, 1);
                 
                 $def_template = $this->content->findByType('template');
                 if (isset($def_template->url))
                 {
                     $template_file = $def_template->url;
-                    if (!is_file($template_file)) $template_file = dirname($template_file);
+                    if (is_file($template_file)) $template_file = dirname($template_file);
                     $filename = rtrim($template_file, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR.$filename;
                     if (file_exists($filename)) $tpl = file_get_contents($filename);
                 }

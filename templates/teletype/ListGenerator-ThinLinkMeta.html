@@ -1,0 +1,13 @@
+{foreach $values}
+<div style="background-color: #020; border: 1px solid #040;">
+	<div style="display:block; background-color: #040; height: 1.5em; border: 1px solid #080;">
+		<div style="display: inline; background-color: #040; float: left;"><q:link ref="{$name/}">{$caption/}</q:link></div>
+		<div style="display: inline; background-color: #040; float: right;">{$meta.modified/}</div>
+	</div>
+	<div style="padding: 4px;">
+		<p>{$meta.description/}<q:link ref="{$name/}">read more</q:link></p>
+	</div>
+</div>
+<br/>
+{/foreach}
+
